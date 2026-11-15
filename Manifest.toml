@@ -2,7 +2,7 @@
 
 julia_version = "1.13.4"
 manifest_format = "2.1"
-project_hash = "c332203faf50d7886d813515c8b7d717aef3ab6a"
+project_hash = "0490131443a1e7836a74b566597b3177892aa441"
 
 [[deps.ADTypes]]
 deps = ["PrecompileTools"]
@@ -176,6 +176,12 @@ weakdeps = ["IntervalSets", "LinearAlgebra", "StaticArrays"]
     ConstructionBaseIntervalSetsExt = "IntervalSets"
     ConstructionBaseLinearAlgebraExt = "LinearAlgebra"
     ConstructionBaseStaticArraysExt = "StaticArrays"
+
+[[deps.Contour]]
+git-tree-sha1 = "439e35b0b36e2e5881738abc8857bd92ad6ff9a8"
+registries = "General"
+uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
+version = "0.6.3"
 
 [[deps.DataStructures]]
 deps = ["OrderedCollections"]
@@ -436,7 +442,7 @@ uuid = "efe28fd5-8261-553b-a9e1-b2916fc3738e"
 version = "0.5.6+0"
 
 [[deps.OptSolutions]]
-deps = ["LinearAlgebra", "Printf", "Symbolics"]
+deps = ["Contour", "LinearAlgebra", "Printf", "Symbolics"]
 path = "."
 uuid = "071b7c32-e8b6-42e1-967a-1d7dc510f2b0"
 version = "0.1.0"

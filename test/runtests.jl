@@ -14,5 +14,6 @@ include("fixtures.jl")
     include("test_broyden.jl")
     include("test_problem4_counts.jl")
     include("test_latex.jl")
+    include("test_plot.jl")
     include("test_solutions.jl")
 end

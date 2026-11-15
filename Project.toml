@@ -4,11 +4,13 @@ version = "0.1.0"
 authors = ["Mostafa Hassanein <most.hassanein@gmail.com>"]
 
 [deps]
+Contour = "d38c429a-6771-53c6-b99e-75d170b6e991"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 
 [compat]
+Contour = "0.6.3"
 LinearAlgebra = "1.13.0"
 Printf = "1.11.0"
 Symbolics = "7.49.0"

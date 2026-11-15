@@ -5,6 +5,8 @@ const MAIN_TEX = raw"""
 \documentclass[11pt]{article}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{amsmath}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \title{Optimization Techniques --- Assignment 2\\ Reference Solutions}
 \date{}
 \begin{document}

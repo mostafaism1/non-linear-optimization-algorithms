@@ -152,3 +152,12 @@ end
         @test occursin("\\input{p4}\n\\clearpage\n\\input{p5}", read(joinpath(dir, "main.tex"), String))
     end
 end
+
+@testset "p4 has the path plot; main.tex loads pgfplots" begin
+    tex = p4()
+    @test occursin("\\begin{tikzpicture}", tex) && occursin("\\addlegendentry{Broyden}", tex)
+    mktempdir() do dir
+        write_solutions(dir)
+        @test occursin("\\usepackage{pgfplots}", read(joinpath(dir, "main.tex"), String))
+    end
+end
