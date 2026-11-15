@@ -36,3 +36,11 @@ function conjugate_gradient(F, ∇F, x0; steps, linesearch, gtol = 1e-10)
     end
     return Trace(records, x, F(x), norm(∇F(x)) ≤ gtol ? :converged : :max_steps)
 end
+
+"""
+    conjugate_gradient(P::Problem, x0; steps, linesearch = calculus_linesearch(P), gtol = 1e-10)
+
+Run CG on a symbolic `Problem`, using its derived F and ∇F.
+"""
+conjugate_gradient(P::Problem, x0; steps, linesearch = calculus_linesearch(P), gtol = 1e-10) =
+    conjugate_gradient(P.F, P.∇F, x0; steps, linesearch, gtol)

@@ -44,3 +44,11 @@ end
     @test tr.steps[2].Fx < tr.steps[1].Fx            # descent
     @test tr.Fx ≈ -40.0                              # F(3, 2) = 18 + 6 + 16 − 42 − 38
 end
+
+@testset "Conjugate gradient — Problem method" begin
+    tr  = conjugate_gradient(P1i, [0, 0]; steps = 3)
+    ref = conjugate_gradient(F1i, ∇F1i, [0.0, 0.0]; steps = 3, linesearch = calculus_linesearch(P1i))
+    @test tr.x ≈ ref.x ≈ [3.0, 2.0]
+    @test [s.α for s in tr.steps] ≈ [s.α for s in ref.steps]
+    @test tr.status == :converged
+end
