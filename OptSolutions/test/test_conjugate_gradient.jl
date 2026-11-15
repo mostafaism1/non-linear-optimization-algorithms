@@ -38,3 +38,11 @@ end
                              steps = 1, linesearch = quadratic_linesearch(H1i))
     @test tr1.status == :max_steps
 end
+
+@testset "Conjugate gradient — Problem 1(i), objective values recorded" begin
+    tr = conjugate_gradient(F1i, ∇F1i, [0.0, 0.0];
+                            steps = 3, linesearch = quadratic_linesearch(H1i))
+    @test tr.steps[1].Fx == 0.0                      # F(0, 0)
+    @test tr.steps[2].Fx < tr.steps[1].Fx            # descent
+    @test tr.Fx ≈ -40.0                              # F(3, 2) = 18 + 6 + 16 − 42 − 38
+end
