@@ -1,10 +1,12 @@
 module OptSolutions
 
 using LinearAlgebra
+using Symbolics
 
-export Trace, CGStep, conjugate_gradient, quadratic_linesearch
+export Problem, Trace, CGStep, conjugate_gradient, quadratic_linesearch
 
 include("trace.jl")
+include("problem.jl")
 include("linesearch.jl")
 include("algorithms/conjugate_gradient.jl")
 
