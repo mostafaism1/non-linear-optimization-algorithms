@@ -18,7 +18,16 @@ function p1i(; digits = 2)
 
     \paragraph{Actual minimum.} Solving $\nabla F = 0$ gives
     """ * "\\[ x^* = $(f(nt.x)), \\quad F^* = $(f(nt.Fx)), \\]\n" *
-    "which CG reached exactly in two steps.\n"
+    "which CG reached exactly in two steps.\n" * """
+
+    \\paragraph{Path.} The grey contours pass through \$x_0\$ and \$x_1\$. The first search stops where
+    its line touches the contour through \$x_1\$. The second direction is \$H\$-conjugate to the first
+    and goes to \$x^*\$.
+
+    \\begin{center}
+    $(latex_plot(P.F, [tr]; xlim = (-0.3, 4.0), ylim = (-0.3, 3.0), levels = [s.Fx for s in tr.steps]))
+    \\end{center}
+    """
 end
 
 """Problem 1(ii): three CG steps on F = 2x₁²x₂² + (x₁−2)² + (x₂−1)² from (0, 0), compared with the actual minimum."""

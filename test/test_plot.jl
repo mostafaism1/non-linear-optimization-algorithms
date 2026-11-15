@@ -30,3 +30,21 @@ end
     end
     @test endswith(tex, "\\end{tikzpicture}\n")
 end
+
+@testset "latex_plot: CG and the quasi-Newton methods on 1(i), distinct styles" begin
+    trs = [conjugate_gradient(P1i, [0.0, 0.0]; steps = 3), dfp(P1i, [0.0, 0.0]; steps = 2),
+           rank_one(P1i, [0.0, 0.0]; steps = 2), broyden(P1i, [0.0, 0.0]; steps = 3)]
+    tex = latex_plot(P1i.F, trs; xlim = (-0.5, 4.0), ylim = (-0.5, 3.0), levels = [-30.0])
+    for name in ["Conjugate gradient", "DFP", "Rank-one", "Broyden"]
+        @test count("\\addlegendentry{$name}", tex) == 1
+    end
+    types = [CGStep{SteepestDescent}, CGStep{FletcherReeves}, NewtonStep,
+             QNStep{DFP}, QNStep{RankOne}, QNStep{Broyden}]
+    @test allunique(OptSolutions.plot_style.(types))
+end
+
+@testset "1(i): DFP and rank-one give the same points as CG (claim in the p2 text)" begin
+    cg = path(conjugate_gradient(P1i, [0.0, 0.0]; steps = 3))
+    @test path(dfp(P1i, [0.0, 0.0]; steps = 2)) ≈ cg
+    @test path(rank_one(P1i, [0.0, 0.0]; steps = 2)) ≈ cg
+end

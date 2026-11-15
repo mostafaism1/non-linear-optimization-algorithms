@@ -61,5 +61,13 @@ function p2(; digits = 2)
       \\item DFP gets \$p_k = -A_k g_k\$ by a matrix--vector product; the rank-one form solves
             \$B_k p_k = -g_k\$.
     \\end{itemize}
+
+    \\paragraph{Paths.} On a quadratic with exact line searches and \$A_0 = B_0 = I\$, DFP and the
+    rank-one update give the same points as CG in Problem 1(i), so the two paths lie on one line.
+    The grey contours pass through \$x_0\$ and \$x_1\$.
+
+    \\begin{center}
+    $(latex_plot(P.F, [A, B]; xlim = (-0.3, 4.0), ylim = (-0.3, 3.0), levels = [s.Fx for s in A.steps]))
+    \\end{center}
     """
 end

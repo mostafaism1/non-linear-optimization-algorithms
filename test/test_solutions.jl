@@ -6,6 +6,7 @@
     @test occursin(latex(tr), tex)                                  # full CG working
     @test occursin("converges in at most \$n = 2\$ steps", tex)       # theory remark
     @test occursin(raw"x^* = (3.00,\ 2.00)^T, \quad F^* = -40.00", tex)   # actual minimum
+    @test occursin("\\addlegendentry{Conjugate gradient}", tex)       # path plot
 end
 
 @testset "write_solutions: fragments + main.tex that compiles" begin
@@ -160,4 +161,10 @@ end
         write_solutions(dir)
         @test occursin("\\usepackage{pgfplots}", read(joinpath(dir, "main.tex"), String))
     end
+end
+
+@testset "p2 and p3 have path plots" begin
+    p2tex, p3tex = p2(), p3()
+    @test occursin("\\addlegendentry{DFP}", p2tex) && occursin("\\addlegendentry{Rank-one}", p2tex)
+    @test occursin("\\addlegendentry{Broyden}", p3tex) && occursin("\\addlegendentry{DFP}", p3tex)
 end
