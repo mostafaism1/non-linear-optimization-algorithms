@@ -55,3 +55,14 @@ end
     \end{tabular}
     """
 end
+
+@testset "whole CG trace: blocks, stop sentence, table" begin
+    tr = conjugate_gradient(P1i, [0.0, 0.0]; steps = 3)
+    out = latex(tr)
+    @test out == join(latex.(tr.steps), "\n") * "\n" *
+                 raw"$g_{2} = 0$, so the method stops at $x_{2} = x^*$." * "\n\n" *
+                 latex_table(tr)
+
+    short = conjugate_gradient(P1i, [0.0, 0.0]; steps = 1)   # :max_steps ⇒ no stop sentence
+    @test !occursin("stops", latex(short))
+end
