@@ -3,12 +3,13 @@ module OptSolutions
 using LinearAlgebra
 using Symbolics
 
-export Problem, Trace, CGStep, conjugate_gradient, calculus_linesearch, LineSearchStep, newton, NewtonStep
+export Problem, Trace, CGStep, conjugate_gradient, calculus_linesearch, LineSearchStep, newton, NewtonStep, fmt
 
 include("trace.jl")
 include("problem.jl")
 include("linesearch.jl")
 include("algorithms/conjugate_gradient.jl")
 include("algorithms/newton.jl")
+include("latex.jl")
 
 end # module OptSolutions

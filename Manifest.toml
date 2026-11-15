@@ -2,7 +2,7 @@
 
 julia_version = "1.13.4"
 manifest_format = "2.1"
-project_hash = "7012b4cb6cd6e88b81c72067fbb12a6ec886c0d8"
+project_hash = "c332203faf50d7886d813515c8b7d717aef3ab6a"
 
 [[deps.ADTypes]]
 deps = ["PrecompileTools"]
@@ -436,7 +436,7 @@ uuid = "efe28fd5-8261-553b-a9e1-b2916fc3738e"
 version = "0.5.6+0"
 
 [[deps.OptSolutions]]
-deps = ["LinearAlgebra", "Symbolics"]
+deps = ["LinearAlgebra", "Printf", "Symbolics"]
 path = "."
 uuid = "071b7c32-e8b6-42e1-967a-1d7dc510f2b0"
 version = "0.1.0"

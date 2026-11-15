@@ -9,4 +9,5 @@ include("fixtures.jl")
     include("test_problem.jl")
     include("test_linesearch.jl")
     include("test_newton.jl")
+    include("test_latex.jl")
 end
