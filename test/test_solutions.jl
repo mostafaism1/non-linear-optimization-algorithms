@@ -78,3 +78,31 @@ end
         @test occursin("\\input{p1ii}\n\\clearpage\n\\input{p2}", main)
     end
 end
+
+@testset "fragment p3: Broyden — certify, two steps, third step, comparison" begin
+    tex = p3()
+    B = broyden(P1i, [0.0, 0.0]; steps = 2)
+    @test startswith(tex, raw"\section*{Problem 3}")
+    # (a) certification
+    @test occursin(raw"&= B_k s_k - B_k s_k + y_k = y_k", tex)
+    # (b) two steps, checked on the computed numbers
+    @test occursin(latex(B), tex)
+    @test occursin(raw"B_{1} s_{0} = (9.94,\ 21.99)^T = y_{0}", tex)
+    @test occursin(raw"B_{2} = \begin{pmatrix} 4.00 & 1.00 \\ 1.00 & 8.00 \end{pmatrix} = H", tex)
+    @test occursin(raw"x_{2} = (2.77,\ 1.84)^T \neq x^*", tex)
+    @test occursin(raw"d_{1} = -g_{1}", tex)                      # Sherman–Morrison remark
+    # third step: Newton step with α = 1 to x*
+    @test occursin(raw"\alpha_{2} = 1.00", tex)
+    @test occursin(raw"x_{3} = (3.00,\ 2.00)^T = x^*", tex)
+    # comparison with Problem 2
+    @test occursin(raw"\paragraph{Comparison with Problem 2.}", tex)
+end
+
+@testset "write_solutions includes p3 after p2" begin
+    mktempdir() do dir
+        write_solutions(dir)
+        @test read(joinpath(dir, "p3.tex"), String) == p3()
+        main = read(joinpath(dir, "main.tex"), String)
+        @test occursin("\\input{p2}\n\\clearpage\n\\input{p3}", main)
+    end
+end
