@@ -28,12 +28,9 @@ function p3(; digits = 2)
     After \$n = $n\$ steps, \$B_{$n} = $(f(B.steps[end].M₊)) = H\$, but
     \$x_{$n} = $(f(B.x)) \\neq x^*\$, because \$g_{$n} = $(f(P.∇F(B.x))) \\neq 0\$.
 
-    \\paragraph{Why two steps are not enough.} The exact line search gives \$s_0^T g_1 = 0\$. With
-    \$B_1 = I + \\frac{(y_0 - s_0) s_0^T}{s_0^T s_0}\$, the Sherman--Morrison formula gives
-    \$B_1^{-1} g_1 = g_1\$, so \$d_{1} = -g_{1}\$: both steps are steepest-descent steps and
-    \$s_0 \\perp s_1\$. On a quadratic, \$y_k = H s_k\$, so
-    \$B_{k+1} - H = (B_k - H)\\left(I - \\frac{s_k s_k^T}{s_k^T s_k}\\right)\$. Two orthogonal steps in two
-    dimensions remove all the error, so \$B_2 = H\$. The next step is therefore the Newton step:
+    \\paragraph{Third step.} In iteration \$k=1\$, \$d_{1} = -g_{1}\$: the second step is also a
+    steepest-descent step, so two steps do not reach \$x^*\$. But \$B_{$n} = H\$, so the next step is
+    the Newton step:
     \\[ d_{2} = -B_{2}^{-1} g_{2} = $(f(t.d)), \\quad \\alpha_{2} = $(f(t.α)), \\quad
        x_{3} = $(f(C.x)) = x^* . \\]
 
