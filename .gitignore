@@ -1,0 +1,3 @@
+# nWave config (keep .nwave/config.json trackable)
+.nwave/*
+!.nwave/config.json
