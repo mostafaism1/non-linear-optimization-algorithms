@@ -40,7 +40,7 @@ function p2(; digits = 2)
       B_{k+1} s_k &= B_k s_k + \\frac{z\\,(z^T s_k)}{z^T s_k} = B_k s_k + z \\\\
       &= B_k s_k + y_k - B_k s_k = y_k .
     \\end{align*}
-    Two steps from \$x_0 = (0, 0)^T\$ with \$B_0 = I\$ and \$d_k = -B_k^{-1} g_k\$:
+    Two steps from \$x_0 = (0, 0)^T\$ with \$B_0 = I\$ and \$p_k = -B_k^{-1} g_k\$:
 
     """ * latex(B; digits) * """
 
@@ -51,15 +51,15 @@ function p2(; digits = 2)
     \\paragraph{Comparison.}
     \\begin{itemize}
       \\item Both methods start with the identity (\$A_0 = B_0 = I\$), so the first step is the
-            steepest-descent step \$d_0 = -g_0\$ for both.
+            steepest-descent step \$p_0 = -g_0\$ for both.
       \\item Both reach \$x^* = $(f(A.x))\$ in \$n = $n\$ steps. DFP builds \$A_{$n} = H^{-1}\$;
             the rank-one update builds \$B_{$n} = H\$.
       \\item DFP adds two rank-one terms per step. It keeps \$A_k\$ positive definite when
             \$s_k^T y_k > 0\$ (here \$s_k^T y_k\$ = $sy).
       \\item The rank-one update adds one term. It needs \$z_k^T s_k \\neq 0\$
             (here \$z_k^T s_k\$ = $zs) and does not guarantee that \$B_k\$ stays positive definite.
-      \\item DFP gets \$d_k = -A_k g_k\$ by a matrix--vector product; the rank-one form solves
-            \$B_k d_k = -g_k\$.
+      \\item DFP gets \$p_k = -A_k g_k\$ by a matrix--vector product; the rank-one form solves
+            \$B_k p_k = -g_k\$.
     \\end{itemize}
     """
 end

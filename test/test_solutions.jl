@@ -55,6 +55,7 @@ end
     A = dfp(P1i, [0.0, 0.0]; steps = 2)
     B = rank_one(P1i, [0.0, 0.0]; steps = 2)
     @test startswith(tex, raw"\section*{Problem 2}")
+    @test !occursin("d_", tex)                                        # direction is p_k, as in the PDF
     # (a) certification: typeset proof of the secant condition
     @test occursin(raw"&= A_k y_k - A_k y_k + s_k = s_k", tex)
     # (b) two DFP steps on 1(i), with the condition checked on the computed numbers
@@ -83,6 +84,7 @@ end
     tex = p3()
     B = broyden(P1i, [0.0, 0.0]; steps = 2)
     @test startswith(tex, raw"\section*{Problem 3}")
+    @test !occursin("d_", tex)                                        # direction is p_k, as in the PDF
     # (a) certification
     @test occursin(raw"&= B_k s_k - B_k s_k + y_k = y_k", tex)
     # (b) two steps, checked on the computed numbers
@@ -90,7 +92,7 @@ end
     @test occursin(raw"B_{1} s_{0} = (9.94,\ 21.99)^T = y_{0}", tex)
     @test occursin(raw"B_{2} = \begin{pmatrix} 4.00 & 1.00 \\ 1.00 & 8.00 \end{pmatrix} = H", tex)
     @test occursin(raw"x_{2} = (2.77,\ 1.84)^T \neq x^*", tex)
-    @test occursin(raw"\paragraph{Third step.} In iteration $k=1$, $d_{1} = -g_{1}$", tex)   # plain remark
+    @test occursin(raw"\paragraph{Third step.} In iteration $k=1$, $p_{1} = -g_{1}$", tex)   # plain remark
     @test !occursin("Sherman", tex) && !occursin("orthogonal", tex)     # no derivation
     # third step: Newton step with α = 1 to x*
     @test occursin(raw"\alpha_{2} = 1.00", tex)

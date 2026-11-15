@@ -143,12 +143,12 @@ next x, y, then the matrix update of the method.
 """
 function latex(s::QNStep{U}; digits = 2) where {U}
     k, f = s.k, v -> fmt(v; digits)
-    xk, gk, dk, αk = "x_{$k}", "g_{$k}", "d_{$k}", "\\alpha_{$k}"
+    xk, gk, pk, αk = "x_{$k}", "g_{$k}", "p_{$k}", "\\alpha_{$k}"
     return iteration_block(k, [
         point_lines(s, f)...,
-        "$dk &= $(direction_tex(U(), k)) = $(f(s.d))",
-        linesearch_lines(s, dk, f, digits)...,
-        "s_{$k} &= $αk $dk = $(f(s.s)), \\quad x_{$(k+1)} = $xk + s_{$k} = $(f(s.x + s.s))",
+        "$pk &= $(direction_tex(U(), k)) = $(f(s.d))",
+        linesearch_lines(s, pk, f, digits)...,
+        "s_{$k} &= $αk $pk = $(f(s.s)), \\quad x_{$(k+1)} = $xk + s_{$k} = $(f(s.x + s.s))",
         "y_{$k} &= g_{$(k+1)} - $gk = $(f(s.y))",
         update_lines(U(), s, f)...,
     ])

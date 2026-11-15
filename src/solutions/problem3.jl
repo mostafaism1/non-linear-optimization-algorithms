@@ -19,7 +19,7 @@ function p3(; digits = 2)
     Thus the Broyden update satisfies the quasi-Newton condition. It does not keep $B_k$ symmetric.
 
     \paragraph{(b) Two Broyden steps on Problem 1(i).} Minimize $F(x, y) = 2x^2 + xy + 4y^2 - 14x - 19y$
-    from $x_0 = (0, 0)^T$ with $B_0 = I$ and $d_k = -B_k^{-1} g_k$, using calculus for each line search.
+    from $x_0 = (0, 0)^T$ with $B_0 = I$ and $p_k = -B_k^{-1} g_k$, using calculus for each line search.
 
     """ * latex(B; digits) * """
 
@@ -28,16 +28,16 @@ function p3(; digits = 2)
     After \$n = $n\$ steps, \$B_{$n} = $(f(B.steps[end].M₊)) = H\$, but
     \$x_{$n} = $(f(B.x)) \\neq x^*\$, because \$g_{$n} = $(f(P.∇F(B.x))) \\neq 0\$.
 
-    \\paragraph{Third step.} In iteration \$k=1\$, \$d_{1} = -g_{1}\$: the second step is also a
+    \\paragraph{Third step.} In iteration \$k=1\$, \$p_{1} = -g_{1}\$: the second step is also a
     steepest-descent step, so two steps do not reach \$x^*\$. But \$B_{$n} = H\$, so the next step is
     the Newton step:
-    \\[ d_{2} = -B_{2}^{-1} g_{2} = $(f(t.d)), \\quad \\alpha_{2} = $(f(t.α)), \\quad
+    \\[ p_{2} = -B_{2}^{-1} g_{2} = $(f(t.d)), \\quad \\alpha_{2} = $(f(t.α)), \\quad
        x_{3} = $(f(C.x)) = x^* . \\]
 
     \\paragraph{Comparison with Problem 2.}
     \\begin{itemize}
       \\item All three updates satisfy the quasi-Newton condition and start from the identity,
-            so the first step is \$d_0 = -g_0\$.
+            so the first step is \$p_0 = -g_0\$.
       \\item DFP and the rank-one update reach \$x^*\$ in \$n = 2\$ steps. Broyden needs $(length(C.steps)) steps on this
             problem: its second step is also a steepest-descent step.
       \\item DFP and the rank-one update keep the matrix symmetric. Broyden does not
