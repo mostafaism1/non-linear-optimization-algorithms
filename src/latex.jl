@@ -41,10 +41,11 @@ end
 point_lines(s, f) = ["x_{$(s.k)} &= $(f(s.x)), \\quad F(x_{$(s.k)}) = $(f(s.Fx))",
                      "g_{$(s.k)} &= \\nabla F(x_{$(s.k)}) = $(f(s.g))"]
 
-"""Lines for the calculus line search along direction `dir` (e.g. "p_{0}"): φ(α), φ′(α) = 0 ⇒ αₖ."""
+"""Lines for the calculus line search along direction `dir` (e.g. "p_{0}"): φ(α), φ′(α) = 0 ⇒ αₖ.
+αₖ gets two more decimals, as in the summary table: a short αₖ times pₖ must give xₖ₊₁."""
 linesearch_lines(s, dir, f, digits) = [
     "\\varphi(\\alpha) &= F(x_{$(s.k)} + \\alpha $dir) = $(fmt_poly(poly_coeffs(s.ls.φ); digits))",
-    "\\varphi'(\\alpha) &= $(fmt_poly(poly_coeffs(s.ls.dφ); digits)) = 0 \\;\\Rightarrow\\; \\alpha_{$(s.k)} = $(f(s.α))"]
+    "\\varphi'(\\alpha) &= $(fmt_poly(poly_coeffs(s.ls.dφ); digits)) = 0 \\;\\Rightarrow\\; \\alpha_{$(s.k)} = $(fmt(s.α; digits = digits + 2))"]
 
 """An iteration's lines as a `\\paragraph` heading plus an `align*` block."""
 iteration_block(k, lines) = "\\paragraph{Iteration \$k=$k\$}\n\\begin{align*}\n" *

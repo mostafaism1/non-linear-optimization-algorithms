@@ -28,7 +28,7 @@ end
       g_{0} &= \nabla F(x_{0}) = (-14.00,\ -19.00)^T\\
       p_{0} &= -g_{0} = (14.00,\ 19.00)^T\\
       \varphi(\alpha) &= F(x_{0} + \alpha p_{0}) = 2102.00\,\alpha^{2} - 557.00\,\alpha\\
-      \varphi'(\alpha) &= 4204.00\,\alpha - 557.00 = 0 \;\Rightarrow\; \alpha_{0} = 0.13\\
+      \varphi'(\alpha) &= 4204.00\,\alpha - 557.00 = 0 \;\Rightarrow\; \alpha_{0} = 0.1325\\
       x_{1} &= x_{0} + \alpha_{0} p_{0} = (1.85,\ 2.52)^T
     \end{align*}
     """
@@ -80,7 +80,7 @@ end
       g_{0} &= \nabla F(x_{0}) = (-14.00,\ -19.00)^T\\
       p_{0} &= -A_{0} g_{0} = (14.00,\ 19.00)^T\\
       \varphi(\alpha) &= F(x_{0} + \alpha p_{0}) = 2102.00\,\alpha^{2} - 557.00\,\alpha\\
-      \varphi'(\alpha) &= 4204.00\,\alpha - 557.00 = 0 \;\Rightarrow\; \alpha_{0} = 0.13\\
+      \varphi'(\alpha) &= 4204.00\,\alpha - 557.00 = 0 \;\Rightarrow\; \alpha_{0} = 0.1325\\
       s_{0} &= \alpha_{0} p_{0} = (1.85,\ 2.52)^T, \quad x_{1} = x_{0} + s_{0} = (1.85,\ 2.52)^T\\
       y_{0} &= g_{1} - g_{0} = (9.94,\ 21.99)^T\\
       A_{1} &= A_{0} - \frac{A_{0} y_{0} y_{0}^T A_{0}}{y_{0}^T A_{0} y_{0}} + \frac{s_{0} s_{0}^T}{s_{0}^T y_{0}} = \begin{pmatrix} 0.88 & -0.31 \\ -0.31 & 0.26 \end{pmatrix}
