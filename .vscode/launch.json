@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "julia",
+      "request": "launch",
+      "name": "Launch Julia tests",
+      "program": "${workspaceFolder}/test/runtests.jl",
+      "cwd": "${workspaceFolder}",
+      "juliaEnv": "${workspaceFolder}",
+      "stopOnEntry": false
+    }
+  ]
+}
