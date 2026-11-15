@@ -13,8 +13,10 @@ Exact line search by calculus: build φ(α) = F(x + αp) symbolically, solve
 φ′(α) = 0 (polynomial, roots via companion matrix) and take the positive root
 with the smallest φ. Returns a function `(x, p) -> LineSearchStep`.
 """
+const α_var = Symbolics.variable(:α)   # step variable of φ(α)
+
 function calculus_linesearch(P::Problem)
-    @variables α
+    α = α_var
     return function (x, p)
         φ  = expand(substitute(P.expr, Dict(P.vars .=> x .+ α .* p)))
         dφ = expand(Symbolics.derivative(φ, α))
@@ -26,13 +28,19 @@ function calculus_linesearch(P::Problem)
     end
 end
 
+"""Coefficients `[c₀, c₁, …, cₙ]` of the univariate polynomial `poly` in `v`."""
+function poly_coeffs(poly, v = α_var)
+    n = Symbolics.degree(poly, v)
+    c0 = Float64(Symbolics.value(substitute(poly, Dict(v => 0))))
+    return [c0; [Float64(Symbolics.value(Symbolics.coeff(poly, v^k))) for k in 1:n]]
+end
+
 """Real roots of the univariate polynomial `poly` in `v`, ascending."""
 function real_roots(poly, v; tol = 1e-9)
-    n = Symbolics.degree(poly, v)
+    c = poly_coeffs(poly, v)
+    n = length(c) - 1
     n ≥ 1 || error("φ′(α) is constant: no stationary point")
-    c = [Float64(Symbolics.value(Symbolics.coeff(poly, v^k))) for k in 1:n]
-    c0 = Float64(Symbolics.value(substitute(poly, Dict(v => 0))))
-    a = [c0; c] ./ c[end]                          # monic: a₀ … aₙ₋₁, 1
+    a = c ./ c[end]                                # monic: a₀ … aₙ₋₁, 1
     n == 1 && return [-a[1]]
     C = zeros(n, n)                                # companion matrix
     C[2:end, 1:end-1] = I(n - 1)
