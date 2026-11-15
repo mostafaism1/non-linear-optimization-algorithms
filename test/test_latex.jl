@@ -43,3 +43,15 @@ end
     @test !occursin("p_{1} &= -g_{1} =", s1)
     @test !occursin(raw"\beta", latex(tr.steps[1]))       # k = 0: no β line
 end
+
+@testset "CG summary table (1(i))" begin
+    tr = conjugate_gradient(P1i, [0.0, 0.0]; steps = 3)
+    @test latex_table(tr) == raw"""
+    \begin{tabular}{c|cccc}
+      $k$ & $x_k$ & $F(x_k)$ & $\beta_k$ & $\alpha_k$ \\ \hline
+      0 & $(0.00,\ 0.00)^T$ & $0.00$ & --- & $0.13$ \\
+      1 & $(1.85,\ 2.52)^T$ & $-36.90$ & $0.05$ & $0.24$ \\
+      2 & $(3.00,\ 2.00)^T$ & $-40.00$ & --- & --- \\
+    \end{tabular}
+    """
+end

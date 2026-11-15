@@ -52,3 +52,18 @@ function latex(s::CGStep; digits = 2)
     return "\\paragraph{Iteration \$k=$k\$}\n\\begin{align*}\n" *
            join(("  " * l for l in lines), "\\\\\n") * "\n\\end{align*}\n"
 end
+
+"""
+    latex_table(tr::Trace{CGStep}; digits = 2) -> String
+
+Summary table: one row per iteration (k, xₖ, F(xₖ), βₖ, αₖ) plus a final row for the end point.
+β₀ and the end point's β, α are shown as "---".
+"""
+function latex_table(tr::Trace{CGStep}; digits = 2)
+    m(v) = "\$" * fmt(v; digits) * "\$"
+    row(cells...) = "  " * join(cells, " & ") * " \\\\"
+    rows = [row(s.k, m(s.x), m(s.Fx), s.k == 0 ? "---" : m(s.β), m(s.α)) for s in tr.steps]
+    push!(rows, row(length(tr.steps), m(tr.x), m(tr.Fx), "---", "---"))
+    header = row("\$k\$", "\$x_k\$", "\$F(x_k)\$", "\$\\beta_k\$", "\$\\alpha_k\$") * " \\hline"
+    return "\\begin{tabular}{c|cccc}\n" * join([header; rows], "\n") * "\n\\end{tabular}\n"
+end
