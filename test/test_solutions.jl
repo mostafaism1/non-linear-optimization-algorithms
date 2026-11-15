@@ -134,3 +134,21 @@ end
         @test occursin("\\input{p3}\n\\clearpage\n\\input{p4}", read(joinpath(dir, "main.tex"), String))
     end
 end
+
+@testset "fragment p5: k so that u and v are A-conjugate" begin
+    tex = p5()
+    @test startswith(tex, "\\section*{Problem 5}")
+    @test occursin("A v = (7,\\ 1,\\ 12)^T", tex)                 # exact integers, no decimals
+    @test occursin("u^T A v = 14 + 3 + 12k = 17 + 12k = 0", tex)
+    @test occursin("k = -\\frac{17}{12} \\approx -1.42", tex)
+    @test occursin("u = (2,\\ 3,\\ -\\tfrac{17}{12})^T", tex) # check line: uᵀAv = 0 with this k
+    @test occursin("u^T A v = 14 + 3 - 17 = 0", tex)
+end
+
+@testset "write_solutions includes p5 after p4" begin
+    mktempdir() do dir
+        write_solutions(dir)
+        @test read(joinpath(dir, "p5.tex"), String) == p5()
+        @test occursin("\\input{p4}\n\\clearpage\n\\input{p5}", read(joinpath(dir, "main.tex"), String))
+    end
+end
