@@ -134,3 +134,12 @@ end
     @test occursin("& \$0.07\$ \\\\", tex)
     @test occursin("5 & \$(1.16,\\ 2.64)^T\$ & \$-81.55\$ & --- & --- & --- \\\\", tex)
 end
+
+@testset "steepest-descent iteration block, k ≥ 1: p = -g, no β (Problem 4(i))" begin
+    s   = steepest_descent(P4, [0.0, 0.0]; steps = 50, xtol = 0.1).steps[2]
+    tex = latex(s)
+    @test startswith(tex, raw"\paragraph{Iteration $k=1$}")
+    @test occursin("p_{1} &= -g_{1} = $(fmt(-s.g))", tex)
+    @test !occursin("beta", tex)
+    @test occursin("x_{2} &= x_{1} + \\alpha_{1} p_{1} = $(fmt(s.x + s.α * s.p))", tex)
+end

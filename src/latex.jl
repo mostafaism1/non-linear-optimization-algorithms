@@ -50,19 +50,27 @@ linesearch_lines(s, dir, f, digits) = [
 iteration_block(k, lines) = "\\paragraph{Iteration \$k=$k\$}\n\\begin{align*}\n" *
                             join(("  " * l for l in lines), "\\\\\n") * "\n\\end{align*}\n"
 
+"""Lines for the search direction pₖ, by β rule: steepest descent always uses pₖ = −gₖ."""
+direction_lines(s::CGStep{SteepestDescent}, f) = ["p_{$(s.k)} &= -g_{$(s.k)} = $(f(s.p))"]
+
+function direction_lines(s::CGStep{FletcherReeves}, f)
+    k = s.k
+    k == 0 && return ["p_{0} &= -g_{0} = $(f(s.p))"]
+    return ["\\beta_{$k} &= \\frac{\\|g_{$k}\\|^2}{\\|g_{$(k-1)}\\|^2} = $(f(s.β))",
+            "p_{$k} &= -g_{$k} + \\beta_{$k} p_{$(k-1)} = $(f(s.p))"]
+end
+
 """
     latex(s::CGStep; digits = 2) -> String
 
-Derivation block for one CG iteration: x, F, g, p, φ(α), φ′(α) = 0 ⇒ α, and the next x.
+Derivation block for one CG iteration: x, F, g, p (by β rule), φ(α), φ′(α) = 0 ⇒ α, and the next x.
 """
 function latex(s::CGStep; digits = 2)
     k, f = s.k, v -> fmt(v; digits)
-    xk, gk, pk, αk = "x_{$k}", "g_{$k}", "p_{$k}", "\\alpha_{$k}"
+    xk, pk, αk = "x_{$k}", "p_{$k}", "\\alpha_{$k}"
     return iteration_block(k, [
         point_lines(s, f)...,
-        (k == 0 ? ["$pk &= -$gk = $(f(s.p))"] :
-         ["\\beta_{$k} &= \\frac{\\|$gk\\|^2}{\\|g_{$(k-1)}\\|^2} = $(f(s.β))",
-          "$pk &= -$gk + \\beta_{$k} p_{$(k-1)} = $(f(s.p))"])...,
+        direction_lines(s, f)...,
         linesearch_lines(s, pk, f, digits)...,
         "x_{$(k+1)} &= $xk + $αk $pk = $(f(s.x + s.α * s.p))",
     ])

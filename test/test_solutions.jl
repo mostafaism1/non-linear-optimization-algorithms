@@ -114,7 +114,7 @@ end
     tex = p4()
     @test startswith(tex, "\\section*{Problem 4}")
     @test occursin("x^* = H^{-1} (62.00,\\ 34.00)^T = (1.14,\\ 2.71)^T", tex)
-    @test occursin(latex_table(steepest_descent(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)
+    @test occursin(latex(steepest_descent(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)   # full working + table
     @test occursin(latex_table(conjugate_gradient(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)
     @test occursin(latex_table(broyden(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)
     # Newton: one line search, α₀ = 1

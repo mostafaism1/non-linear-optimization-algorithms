@@ -32,8 +32,7 @@ function p4(; digits = 2)
 
     \\paragraph{(i) Steepest descent.} \$p_k = -g_k\$.
 
-    \\medskip
-    $(latex_table(sd; digits))
+    $(latex(sd; digits))
     Successive directions are orthogonal, so the path zig-zags to \$x^*\$. Search \$k = $(n_sd - 1)\$
     gives \$\\|x_{$n_sd} - x_{$(n_sd - 1)}\\| = $(f(last_sd)) \\le 0.1\$: \\textbf{$n_sd searches}.
 
