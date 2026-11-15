@@ -21,6 +21,7 @@ end
     tex = latex_plot(P4.F, [sd, cg, nt, br]; xlim = (-0.5, 2.5), ylim = (-0.5, 3.5), levels = [-80.0, -40.0])
     @test startswith(tex, "\\begin{tikzpicture}")
     @test occursin("\\begin{axis}[", tex) && occursin("axis equal image", tex)
+    @test occursin("width=\\linewidth", tex) && occursin("legend pos=south east", tex)   # full width, legend inside
     @test count("forget plot", tex) == length(contour_lines(P4.F, (-0.5, 2.5), (-0.5, 3.5), [-80.0, -40.0]))
     sd_coords = join(("($(fmt(p[1]; digits = 3)), $(fmt(p[2]; digits = 3)))" for p in path(sd)), " ")
     @test occursin("coordinates {$sd_coords};", tex)

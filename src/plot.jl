@@ -43,7 +43,7 @@ function latex_plot(F, traces; xlim, ylim, levels)
     return """
     \\begin{tikzpicture}
     \\begin{axis}[axis equal image, xmin=$(xlim[1]), xmax=$(xlim[2]), ymin=$(ylim[1]), ymax=$(ylim[2]),
-      xlabel={\$x_1\$}, ylabel={\$x_2\$}, legend pos=outer north east, legend cell align=left]
+      width=\\linewidth, xlabel={\$x_1\$}, ylabel={\$x_2\$}, legend pos=south east, legend cell align=left]
     $(join(contour, "\n"))
     $(join(path_plot.(traces), "\n"))
     \\end{axis}

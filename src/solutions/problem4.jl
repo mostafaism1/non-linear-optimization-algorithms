@@ -78,7 +78,7 @@ function p4(; digits = 2)
     Newton goes to \$x^*\$ in one step.
 
     \\begin{center}
-    $(latex_plot(P.F, [sd, cg, nt, br]; xlim = (-0.3, 2.3), ylim = (-0.3, 3.2),
+    $(latex_plot(P.F, [sd, cg, nt, br]; xlim = (-1.0, 3.3), ylim = (-0.3, 3.2),
                  levels = [s.Fx for s in sd.steps]))
     \\end{center}
     """
