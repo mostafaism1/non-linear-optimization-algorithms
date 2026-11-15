@@ -98,6 +98,16 @@ end
     @test !occursin("A_{", b)
 end
 
+@testset "Broyden iteration block (1(i), k = 0): B form, non-symmetric B₁" begin
+    tr = broyden(P1i, [0.0, 0.0]; steps = 2)
+    b = latex(tr.steps[1])
+    # y₀ = H s₀ ≈ (9.94, 21.99);  B₀s₀ − y₀ = s₀ − y₀ ≈ (−8.08, −19.48)
+    @test occursin(raw"d_{0} &= -B_{0}^{-1} g_{0} = (14.00,\ 19.00)^T\\", b)
+    @test occursin(raw"B_{0} s_{0} - y_{0} &= (-8.08,\ -19.48)^T\\", b)
+    @test occursin(raw"B_{1} &= B_{0} - \frac{(B_{0} s_{0} - y_{0}) s_{0}^T}{s_{0}^T s_{0}} = \begin{pmatrix} 2.53 & 2.08 \\ 3.69 & 6.01 \end{pmatrix}", b)
+    @test !occursin("A_{", b) && !occursin("z_{", b)
+end
+
 @testset "quasi-Newton summary table (DFP, 1(i))" begin
     tr = dfp(P1i, [0.0, 0.0]; steps = 2)
     @test latex_table(tr) == raw"""

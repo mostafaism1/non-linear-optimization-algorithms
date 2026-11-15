@@ -129,6 +129,12 @@ function update_lines(::RankOne, s, f)
             "B_{$j} &= B_{$k} + \\frac{z_{$k} z_{$k}^T}{z_{$k}^T s_{$k}} = $(f(s.M₊))"]
 end
 
+function update_lines(::Broyden, s, f)
+    k, j = s.k, s.k + 1
+    return ["B_{$k} s_{$k} - y_{$k} &= $(f(s.M * s.s - s.y))",
+            "B_{$j} &= B_{$k} - \\frac{(B_{$k} s_{$k} - y_{$k}) s_{$k}^T}{s_{$k}^T s_{$k}} = $(f(s.M₊))"]
+end
+
 """
     latex(s::QNStep; digits = 2) -> String
 
