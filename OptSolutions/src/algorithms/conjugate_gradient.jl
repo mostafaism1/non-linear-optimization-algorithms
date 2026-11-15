@@ -7,13 +7,14 @@ struct CGStep
     β::Float64           # βₖ = ‖gₖ‖² / ‖gₖ₋₁‖²   (β₀ = 0)
     p::Vector{Float64}   # pₖ = −gₖ + βₖ pₖ₋₁
     α::Float64           # step length from the line search
+    ls::LineSearchStep   # working of the line search (φ, φ′, roots)
 end
 
 """
     conjugate_gradient(F, ∇F, x0; steps, linesearch) -> Trace{CGStep}
 
 Fletcher–Reeves CG: p₀ = −g₀, pₖ = −gₖ + (‖gₖ‖/‖gₖ₋₁‖)² pₖ₋₁, xₖ₊₁ = xₖ + αₖ pₖ,
-with αₖ from `linesearch(xₖ, pₖ, gₖ)`. Stops early once ‖gₖ‖ ≤ `gtol`.
+with αₖ from `linesearch(xₖ, pₖ, gₖ) -> LineSearchStep`. Stops early once ‖gₖ‖ ≤ `gtol`.
 """
 function conjugate_gradient(F, ∇F, x0; steps, linesearch, gtol = 1e-10)
     x = float.(x0)
@@ -28,8 +29,9 @@ function conjugate_gradient(F, ∇F, x0; steps, linesearch, gtol = 1e-10)
             β = dot(g, g) / dot(prev.g, prev.g)
             p = -g + β * prev.p
         end
-        α = linesearch(x, p, g)
-        push!(records, CGStep(k, x, F(x), g, β, p, α))
+        ls = linesearch(x, p, g)
+        α = ls.α
+        push!(records, CGStep(k, x, F(x), g, β, p, α, ls))
         x = x + α * p
     end
     return Trace(records, x, F(x), norm(∇F(x)) ≤ gtol ? :converged : :max_steps)
