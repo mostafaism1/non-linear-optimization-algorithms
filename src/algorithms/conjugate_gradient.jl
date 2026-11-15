@@ -14,7 +14,7 @@ end
     conjugate_gradient(F, ∇F, x0; steps, linesearch) -> Trace{CGStep}
 
 Fletcher–Reeves CG: p₀ = −g₀, pₖ = −gₖ + (‖gₖ‖/‖gₖ₋₁‖)² pₖ₋₁, xₖ₊₁ = xₖ + αₖ pₖ,
-with αₖ from `linesearch(xₖ, pₖ, gₖ) -> LineSearchStep`. Stops early once ‖gₖ‖ ≤ `gtol`.
+with αₖ from `linesearch(xₖ, pₖ) -> LineSearchStep`. Stops early once ‖gₖ‖ ≤ `gtol`.
 """
 function conjugate_gradient(F, ∇F, x0; steps, linesearch, gtol = 1e-10)
     x = float.(x0)
@@ -29,7 +29,7 @@ function conjugate_gradient(F, ∇F, x0; steps, linesearch, gtol = 1e-10)
             β = dot(g, g) / dot(prev.g, prev.g)
             p = -g + β * prev.p
         end
-        ls = linesearch(x, p, g)
+        ls = linesearch(x, p)
         α = ls.α
         push!(records, CGStep(k, x, F(x), g, β, p, α, ls))
         x = x + α * p

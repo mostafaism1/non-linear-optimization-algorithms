@@ -11,11 +11,11 @@ end
 
 Exact line search by calculus: build φ(α) = F(x + αp) symbolically, solve
 φ′(α) = 0 (polynomial, roots via companion matrix) and take the positive root
-with the smallest φ. Returns a function `(x, p, g) -> LineSearchStep`.
+with the smallest φ. Returns a function `(x, p) -> LineSearchStep`.
 """
 function calculus_linesearch(P::Problem)
     @variables α
-    return function (x, p, g)
+    return function (x, p)
         φ  = expand(substitute(P.expr, Dict(P.vars .=> x .+ α .* p)))
         dφ = expand(Symbolics.derivative(φ, α))
         rs = real_roots(dφ, α)
