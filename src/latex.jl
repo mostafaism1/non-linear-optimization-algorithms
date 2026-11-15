@@ -13,6 +13,12 @@ end
 """    fmt(v::AbstractVector; digits = 2) -> String — column vector as `(v₁,\\ v₂)^T`."""
 fmt(v::AbstractVector; digits = 2) = "(" * join((fmt(x; digits) for x in v), ",\\ ") * ")^T"
 
+"""    fmt(M::AbstractMatrix; digits = 2) -> String — matrix as `pmatrix`."""
+fmt(M::AbstractMatrix; digits = 2) =
+    "\\begin{pmatrix} " *
+    join((join((fmt(x; digits) for x in r), " & ") for r in eachrow(M)), " \\\\ ") *
+    " \\end{pmatrix}"
+
 """
     fmt_poly(c; digits = 2) -> String
 
@@ -31,6 +37,19 @@ function fmt_poly(c::AbstractVector; digits = 2)
     return out
 end
 
+"""Lines for xₖ, F(xₖ) and gₖ, common to every line-search method."""
+point_lines(s, f) = ["x_{$(s.k)} &= $(f(s.x)), \\quad F(x_{$(s.k)}) = $(f(s.Fx))",
+                     "g_{$(s.k)} &= \\nabla F(x_{$(s.k)}) = $(f(s.g))"]
+
+"""Lines for the calculus line search along direction `dir` (e.g. "p_{0}"): φ(α), φ′(α) = 0 ⇒ αₖ."""
+linesearch_lines(s, dir, f, digits) = [
+    "\\varphi(\\alpha) &= F(x_{$(s.k)} + \\alpha $dir) = $(fmt_poly(poly_coeffs(s.ls.φ); digits))",
+    "\\varphi'(\\alpha) &= $(fmt_poly(poly_coeffs(s.ls.dφ); digits)) = 0 \\;\\Rightarrow\\; \\alpha_{$(s.k)} = $(f(s.α))"]
+
+"""An iteration's lines as a `\\paragraph` heading plus an `align*` block."""
+iteration_block(k, lines) = "\\paragraph{Iteration \$k=$k\$}\n\\begin{align*}\n" *
+                            join(("  " * l for l in lines), "\\\\\n") * "\n\\end{align*}\n"
+
 """
     latex(s::CGStep; digits = 2) -> String
 
@@ -39,18 +58,14 @@ Derivation block for one CG iteration: x, F, g, p, φ(α), φ′(α) = 0 ⇒ α,
 function latex(s::CGStep; digits = 2)
     k, f = s.k, v -> fmt(v; digits)
     xk, gk, pk, αk = "x_{$k}", "g_{$k}", "p_{$k}", "\\alpha_{$k}"
-    lines = [
-        "$xk &= $(f(s.x)), \\quad F($xk) = $(f(s.Fx))",
-        "$gk &= \\nabla F($xk) = $(f(s.g))",
+    return iteration_block(k, [
+        point_lines(s, f)...,
         (k == 0 ? ["$pk &= -$gk = $(f(s.p))"] :
          ["\\beta_{$k} &= \\frac{\\|$gk\\|^2}{\\|g_{$(k-1)}\\|^2} = $(f(s.β))",
           "$pk &= -$gk + \\beta_{$k} p_{$(k-1)} = $(f(s.p))"])...,
-        "\\varphi(\\alpha) &= F($xk + \\alpha $pk) = $(fmt_poly(poly_coeffs(s.ls.φ); digits))",
-        "\\varphi'(\\alpha) &= $(fmt_poly(poly_coeffs(s.ls.dφ); digits)) = 0 \\;\\Rightarrow\\; $αk = $(f(s.α))",
+        linesearch_lines(s, pk, f, digits)...,
         "x_{$(k+1)} &= $xk + $αk $pk = $(f(s.x + s.α * s.p))",
-    ]
-    return "\\paragraph{Iteration \$k=$k\$}\n\\begin{align*}\n" *
-           join(("  " * l for l in lines), "\\\\\n") * "\n\\end{align*}\n"
+    ])
 end
 
 """
@@ -79,4 +94,39 @@ function latex(tr::Trace{CGStep}; digits = 2)
         "\$g_{$n} = 0\$, so the method stops at \$x_{$n} = x^*\$.\n\n" : "\n"
     return join((latex(s; digits) for s in tr.steps), "\n") * "\n" * stop *
            "\\medskip\n" * latex_table(tr; digits)
+end
+
+direction_tex(::InverseUpdate, k) = "-A_{$k} g_{$k}"
+direction_tex(::DirectUpdate,  k) = "-B_{$k}^{-1} g_{$k}"
+
+"""Lines that show the matrix update Mₖ → Mₖ₊₁ for update formula `U`."""
+function update_lines(::DFP, s, f)
+    k, j = s.k, s.k + 1
+    return ["A_{$j} &= A_{$k} - \\frac{A_{$k} y_{$k} y_{$k}^T A_{$k}}{y_{$k}^T A_{$k} y_{$k}} + " *
+            "\\frac{s_{$k} s_{$k}^T}{s_{$k}^T y_{$k}} = $(f(s.M₊))"]
+end
+
+function update_lines(::RankOne, s, f)
+    k, j = s.k, s.k + 1
+    return ["z_{$k} &= y_{$k} - B_{$k} s_{$k} = $(f(s.y - s.M * s.s))",
+            "B_{$j} &= B_{$k} + \\frac{z_{$k} z_{$k}^T}{z_{$k}^T s_{$k}} = $(f(s.M₊))"]
+end
+
+"""
+    latex(s::QNStep; digits = 2) -> String
+
+Derivation block for one quasi-Newton iteration: x, F, g, d, φ(α), φ′(α) = 0 ⇒ α, s and the
+next x, y, then the matrix update of the method.
+"""
+function latex(s::QNStep{U}; digits = 2) where {U}
+    k, f = s.k, v -> fmt(v; digits)
+    xk, gk, dk, αk = "x_{$k}", "g_{$k}", "d_{$k}", "\\alpha_{$k}"
+    return iteration_block(k, [
+        point_lines(s, f)...,
+        "$dk &= $(direction_tex(U(), k)) = $(f(s.d))",
+        linesearch_lines(s, dk, f, digits)...,
+        "s_{$k} &= $αk $dk = $(f(s.s)), \\quad x_{$(k+1)} = $xk + s_{$k} = $(f(s.x + s.s))",
+        "y_{$k} &= g_{$(k+1)} - $gk = $(f(s.y))",
+        update_lines(U(), s, f)...,
+    ])
 end

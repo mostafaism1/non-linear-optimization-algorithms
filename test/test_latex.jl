@@ -66,3 +66,34 @@ end
     short = conjugate_gradient(P1i, [0.0, 0.0]; steps = 1)   # :max_steps ⇒ no stop sentence
     @test !occursin("stops", latex(short))
 end
+
+@testset "matrices: pmatrix, 2 d.p." begin
+    @test fmt([1.0 0.0; 0.0 1.0]) == raw"\begin{pmatrix} 1.00 & 0.00 \\ 0.00 & 1.00 \end{pmatrix}"
+end
+
+@testset "DFP iteration block (1(i), k = 0)" begin
+    tr = dfp(P1i, [0.0, 0.0]; steps = 2)
+    @test latex(tr.steps[1]) == raw"""
+    \paragraph{Iteration $k=0$}
+    \begin{align*}
+      x_{0} &= (0.00,\ 0.00)^T, \quad F(x_{0}) = 0.00\\
+      g_{0} &= \nabla F(x_{0}) = (-14.00,\ -19.00)^T\\
+      d_{0} &= -A_{0} g_{0} = (14.00,\ 19.00)^T\\
+      \varphi(\alpha) &= F(x_{0} + \alpha d_{0}) = 2102.00\,\alpha^{2} - 557.00\,\alpha\\
+      \varphi'(\alpha) &= 4204.00\,\alpha - 557.00 = 0 \;\Rightarrow\; \alpha_{0} = 0.13\\
+      s_{0} &= \alpha_{0} d_{0} = (1.85,\ 2.52)^T, \quad x_{1} = x_{0} + s_{0} = (1.85,\ 2.52)^T\\
+      y_{0} &= g_{1} - g_{0} = (9.94,\ 21.99)^T\\
+      A_{1} &= A_{0} - \frac{A_{0} y_{0} y_{0}^T A_{0}}{y_{0}^T A_{0} y_{0}} + \frac{s_{0} s_{0}^T}{s_{0}^T y_{0}} = \begin{pmatrix} 0.88 & -0.31 \\ -0.31 & 0.26 \end{pmatrix}
+    \end{align*}
+    """
+end
+
+@testset "rank-one iteration block (1(i), k = 1): B form, z line" begin
+    tr = rank_one(P1i, [0.0, 0.0]; steps = 2)
+    b = latex(tr.steps[2])
+    # z₁ = y₁ − B₁s₁ ≈ (4.06, −2.99) − (1.04, −0.77) = (3.02, −2.23);  B₂ = H
+    @test occursin(raw"d_{1} &= -B_{1}^{-1} g_{1} = (4.47,\ -2.02)^T\\", b)
+    @test occursin(raw"z_{1} &= y_{1} - B_{1} s_{1} = (3.02,\ -2.23)^T\\", b)
+    @test occursin(raw"B_{2} &= B_{1} + \frac{z_{1} z_{1}^T}{z_{1}^T s_{1}} = \begin{pmatrix} 4.00 & 1.00 \\ 1.00 & 8.00 \end{pmatrix}", b)
+    @test !occursin("A_{", b)
+end
