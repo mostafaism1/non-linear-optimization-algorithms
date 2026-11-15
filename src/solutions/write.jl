@@ -1,5 +1,5 @@
 """Fragments in assignment order: file name (without .tex) => generator."""
-const FRAGMENTS = ["p1i" => p1i, "p1ii" => p1ii]
+const FRAGMENTS = ["p1i" => p1i, "p1ii" => p1ii, "p2" => p2]
 
 const MAIN_TEX = raw"""
 \documentclass[11pt]{article}

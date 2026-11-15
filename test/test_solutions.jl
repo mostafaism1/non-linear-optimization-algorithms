@@ -49,3 +49,32 @@ end
         @test occursin("\\input{p1i}\n\\clearpage\n\\input{p1ii}", main)   # each part on a new page
     end
 end
+
+@testset "fragment p2: certify DFP, two DFP steps, compare with rank-one" begin
+    tex = p2()
+    A = dfp(P1i, [0.0, 0.0]; steps = 2)
+    B = rank_one(P1i, [0.0, 0.0]; steps = 2)
+    @test startswith(tex, raw"\section*{Problem 2}")
+    # (a) certification: typeset proof of the secant condition
+    @test occursin(raw"&= A_k y_k - A_k y_k + s_k = s_k", tex)
+    # (b) two DFP steps on 1(i), with the condition checked on the computed numbers
+    @test occursin(latex(A), tex)
+    @test occursin(raw"A_{1} y_{0} = (1.85,\ 2.52)^T = s_{0}", tex)
+    @test occursin(raw"A_{2} y_{1} = (1.15,\ -0.52)^T = s_{1}", tex)
+    @test occursin(raw"A_{2} = \begin{pmatrix} 0.26 & -0.03 \\ -0.03 & 0.13 \end{pmatrix} = H^{-1}", tex)
+    # (c) rank-one comparison
+    @test occursin(raw"&= B_k s_k + y_k - B_k s_k = y_k", tex)
+    @test occursin(latex(B), tex)
+    @test occursin(raw"B_{2} s_{1} = (4.06,\ -2.99)^T = y_{1}", tex)
+    @test occursin(raw"B_{2} = \begin{pmatrix} 4.00 & 1.00 \\ 1.00 & 8.00 \end{pmatrix} = H", tex)
+    @test occursin(raw"z_k^T s_k", tex) && occursin("64.02", tex) && occursin("4.61", tex)
+end
+
+@testset "write_solutions includes p2 after p1ii" begin
+    mktempdir() do dir
+        write_solutions(dir)
+        @test read(joinpath(dir, "p2.tex"), String) == p2()
+        main = read(joinpath(dir, "main.tex"), String)
+        @test occursin("\\input{p1ii}\n\\clearpage\n\\input{p2}", main)
+    end
+end
