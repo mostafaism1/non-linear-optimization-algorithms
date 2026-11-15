@@ -11,6 +11,7 @@ include("fixtures.jl")
     include("test_newton.jl")
     include("test_dfp.jl")
     include("test_rank_one.jl")
+    include("test_broyden.jl")
     include("test_latex.jl")
     include("test_solutions.jl")
 end

@@ -69,3 +69,9 @@ dfp(P::Problem, x0; kw...) = quasi_newton(P, x0; update = DFP(), kw...)
 
 """    rank_one(P, x0; kw...) — symmetric rank-one, B₀ = I (see `quasi_newton`)."""
 rank_one(P::Problem, x0; kw...) = quasi_newton(P, x0; update = RankOne(), kw...)
+
+"""Broyden update (not symmetric): Bₖ₊₁ = Bₖ − (Bₖsₖ − yₖ)sₖᵀ / (sₖᵀsₖ)."""
+struct Broyden <: DirectUpdate end
+(::Broyden)(B, s, y) = B - (B * s - y) * s' / dot(s, s)
+
+broyden(P::Problem, x0; kw...) = quasi_newton(P, x0; update = Broyden(), kw...)
