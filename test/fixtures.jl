@@ -9,3 +9,6 @@ const P1i = Problem(2x^2 + x*y + 4y^2 - 14x - 19y, [x, y])
 
 "Closed-form exact step for a quadratic — independent oracle for the calculus line search."
 α_quadratic(H, g, p) = -dot(g, p) / dot(p, H * p)
+
+@variables x1 x2
+const P1ii = Problem(2x1^2 * x2^2 + (x1 - 2)^2 + (x2 - 1)^2, [x1, x2])
