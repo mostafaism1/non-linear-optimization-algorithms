@@ -1,0 +1,16 @@
+name = "OptSolutions"
+uuid = "071b7c32-e8b6-42e1-967a-1d7dc510f2b0"
+version = "0.1.0"
+authors = ["Mostafa Hassanein <most.hassanein@gmail.com>"]
+
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
+[compat]
+LinearAlgebra = "1.13.0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

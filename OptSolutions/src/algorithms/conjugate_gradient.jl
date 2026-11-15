@@ -1,0 +1,35 @@
+"""One iteration of the (Fletcher–Reeves) conjugate gradient method."""
+struct CGStep
+    k::Int
+    x::Vector{Float64}   # xₖ
+    g::Vector{Float64}   # gₖ = ∇F(xₖ)
+    β::Float64           # βₖ = ‖gₖ‖² / ‖gₖ₋₁‖²   (β₀ = 0)
+    p::Vector{Float64}   # pₖ = −gₖ + βₖ pₖ₋₁
+    α::Float64           # step length from the line search
+end
+
+"""
+    conjugate_gradient(F, ∇F, x0; steps, linesearch) -> Trace{CGStep}
+
+Fletcher–Reeves CG: p₀ = −g₀, pₖ = −gₖ + (‖gₖ‖/‖gₖ₋₁‖)² pₖ₋₁, xₖ₊₁ = xₖ + αₖ pₖ,
+with αₖ from `linesearch(xₖ, pₖ, gₖ)`. Stops early once ‖gₖ‖ ≤ `gtol`.
+"""
+function conjugate_gradient(F, ∇F, x0; steps, linesearch, gtol = 1e-10)
+    x = float.(x0)
+    records = CGStep[]
+    for k in 0:steps-1
+        g = ∇F(x)
+        norm(g) ≤ gtol && return Trace(records, x, :converged)
+        if k == 0
+            β, p = 0.0, -g
+        else
+            prev = records[end]
+            β = dot(g, g) / dot(prev.g, prev.g)
+            p = -g + β * prev.p
+        end
+        α = linesearch(x, p, g)
+        push!(records, CGStep(k, x, g, β, p, α))
+        x = x + α * p
+    end
+    return Trace(records, x, norm(∇F(x)) ≤ gtol ? :converged : :max_steps)
+end
