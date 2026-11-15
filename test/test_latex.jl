@@ -126,3 +126,16 @@ end
                        raw"$g_{2} = 0$, so the method stops at $x_{2} = x^*$." * "\n\n" *
                        raw"\medskip" * "\n" * latex_table(tr)
 end
+
+@testset "LaTeX — search table with step lengths (Problem 4)" begin
+    tr  = steepest_descent(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)
+    tex = latex_search_table(tr)
+    @test occursin("\$\\|x_{k+1} - x_k\\|\$", tex)
+    @test occursin("0 & \$(0.00,\\ 0.00)^T\$ & \$(62.00,\\ 34.00)^T\$ & \$0.0262\$ & \$1.85\$ \\\\", tex)
+    @test occursin("4 & \$(1.10,\\ 2.61)^T\$", tex)
+    @test occursin("& \$0.07\$ \\\\", tex)
+    @test occursin("5 & \$(1.16,\\ 2.64)^T\$ & --- & --- & --- \\\\", tex)
+
+    qn = latex_search_table(broyden(P4, [0.0, 0.0]; steps = 50, xtol = 0.1))
+    @test occursin("3 & \$(1.14,\\ 2.71)^T\$ & --- & --- & --- \\\\", qn)
+end

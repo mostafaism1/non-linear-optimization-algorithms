@@ -153,3 +153,20 @@ function latex(s::QNStep{U}; digits = 2) where {U}
         update_lines(U(), s, f)...,
     ])
 end
+
+search_dir(s::CGStep) = s.p
+search_dir(s::QNStep) = s.d
+
+"""
+    latex_search_table(tr; digits = 2) -> String
+
+One row per line search (k, xₖ, pₖ, αₖ, ‖xₖ₊₁ − xₖ‖) plus a final row for the end point.
+αₖ gets two more decimals than the rest, since short steps round to almost nothing.
+"""
+function latex_search_table(tr::Trace; digits = 2)
+    m(v; d = digits) = "\$" * fmt(v; digits = d) * "\$"
+    return tabular(["\$k\$", "\$x_k\$", "\$p_k\$", "\$\\alpha_k\$", "\$\\|x_{k+1} - x_k\\|\$"],
+                   [[[s.k, m(s.x), m(search_dir(s)), m(s.α; d = digits + 2), m(norm(s.α * search_dir(s)))]
+                     for s in tr.steps];
+                    [[length(tr.steps), m(tr.x), "---", "---", "---"]]])
+end

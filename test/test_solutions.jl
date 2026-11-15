@@ -109,3 +109,28 @@ end
         @test occursin("\\input{p2}\n\\clearpage\n\\input{p3}", main)
     end
 end
+
+@testset "fragment p4: number of line searches with ‖xₖ₊₁ − xₖ‖ ≤ 0.1" begin
+    tex = p4()
+    @test startswith(tex, "\\section*{Problem 4}")
+    @test occursin("x^* = H^{-1} (62.00,\\ 34.00)^T = (1.14,\\ 2.71)^T", tex)
+    @test occursin(latex_search_table(steepest_descent(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)
+    @test occursin(latex_search_table(conjugate_gradient(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)
+    @test occursin(latex_search_table(broyden(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)
+    # Newton: one line search, α₀ = 1
+    @test occursin("p_{0} &= -H^{-1} g_{0} = (1.14,\\ 2.71)^T", tex)
+    @test occursin("\\alpha_{0} = 1.00", tex)
+    # answer table
+    for row in ["(i) Steepest descent & 5", "(ii) Conjugate gradient & 2",
+                "(iii) Newton & 1", "(iv) Broyden & 3"]
+        @test occursin(row, tex)
+    end
+end
+
+@testset "write_solutions includes p4 after p3" begin
+    mktempdir() do dir
+        write_solutions(dir)
+        @test read(joinpath(dir, "p4.tex"), String) == p4()
+        @test occursin("\\input{p3}\n\\clearpage\n\\input{p4}", read(joinpath(dir, "main.tex"), String))
+    end
+end
