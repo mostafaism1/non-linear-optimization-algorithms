@@ -10,9 +10,7 @@ end
     levels = [-80.0, -60.0, -20.0]
     lines  = contour_lines(P4.F, (-0.5, 2.5), (-0.5, 3.5), levels)
     @test sort(unique(first.(lines))) == levels                 # each level gives a line
-    for (c, pts) in lines, p in pts
-        @test abs(P4.F(p) - c) < 0.1
-    end
+    @test all(abs(P4.F(p) - c) < 0.1 for (c, pts) in lines for p in pts)
 end
 
 @testset "latex_plot: contours + one styled, labelled path per trace" begin
