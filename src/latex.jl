@@ -76,19 +76,36 @@ Summary table: one row per iteration (k, xₖ, F(xₖ), βₖ, αₖ) plus a fin
 """
 function latex_table(tr::Trace{CGStep}; digits = 2)
     m(v) = "\$" * fmt(v; digits) * "\$"
-    row(cells...) = "  " * join(cells, " & ") * " \\\\"
-    rows = [row(s.k, m(s.x), m(s.Fx), s.k == 0 ? "---" : m(s.β), m(s.α)) for s in tr.steps]
-    push!(rows, row(length(tr.steps), m(tr.x), m(tr.Fx), "---", "---"))
-    header = row("\$k\$", "\$x_k\$", "\$F(x_k)\$", "\$\\beta_k\$", "\$\\alpha_k\$") * " \\hline"
-    return "\\begin{tabular}{c|cccc}\n" * join([header; rows], "\n") * "\n\\end{tabular}\n"
+    return tabular(["\$k\$", "\$x_k\$", "\$F(x_k)\$", "\$\\beta_k\$", "\$\\alpha_k\$"],
+                   [[[s.k, m(s.x), m(s.Fx), s.k == 0 ? "---" : m(s.β), m(s.α)] for s in tr.steps];
+                    [[length(tr.steps), m(tr.x), m(tr.Fx), "---", "---"]]])
+end
+
+"""`tabular` with a `c|c…c` layout: header row, `\\hline`, then one line per row of cells."""
+function tabular(header, rows)
+    row(cells) = "  " * join(cells, " & ") * " \\\\"
+    return "\\begin{tabular}{c|$("c"^(length(header) - 1))}\n" *
+           join([row(header) * " \\hline"; row.(rows)], "\n") * "\n\\end{tabular}\n"
 end
 
 """
-    latex(tr::Trace{CGStep}; digits = 2) -> String
+    latex_table(tr::Trace{<:QNStep}; digits = 2) -> String
+
+Summary table: one row per iteration (k, xₖ, F(xₖ), αₖ) plus a final row for the end point.
+"""
+function latex_table(tr::Trace{<:QNStep}; digits = 2)
+    m(v) = "\$" * fmt(v; digits) * "\$"
+    return tabular(["\$k\$", "\$x_k\$", "\$F(x_k)\$", "\$\\alpha_k\$"],
+                   [[[s.k, m(s.x), m(s.Fx), m(s.α)] for s in tr.steps];
+                    [[length(tr.steps), m(tr.x), m(tr.Fx), "---"]]])
+end
+
+"""
+    latex(tr::Trace; digits = 2) -> String
 
 All iteration blocks, then (if the run converged) the stop sentence, then the summary table.
 """
-function latex(tr::Trace{CGStep}; digits = 2)
+function latex(tr::Trace; digits = 2)
     n = length(tr.steps)
     stop = tr.status == :converged ?
         "\$g_{$n} = 0\$, so the method stops at \$x_{$n} = x^*\$.\n\n" : "\n"

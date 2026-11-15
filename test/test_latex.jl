@@ -97,3 +97,22 @@ end
     @test occursin(raw"B_{2} &= B_{1} + \frac{z_{1} z_{1}^T}{z_{1}^T s_{1}} = \begin{pmatrix} 4.00 & 1.00 \\ 1.00 & 8.00 \end{pmatrix}", b)
     @test !occursin("A_{", b)
 end
+
+@testset "quasi-Newton summary table (DFP, 1(i))" begin
+    tr = dfp(P1i, [0.0, 0.0]; steps = 2)
+    @test latex_table(tr) == raw"""
+    \begin{tabular}{c|ccc}
+      $k$ & $x_k$ & $F(x_k)$ & $\alpha_k$ \\ \hline
+      0 & $(0.00,\ 0.00)^T$ & $0.00$ & $0.13$ \\
+      1 & $(1.85,\ 2.52)^T$ & $-36.90$ & $0.25$ \\
+      2 & $(3.00,\ 2.00)^T$ & $-40.00$ & --- \\
+    \end{tabular}
+    """
+end
+
+@testset "whole quasi-Newton trace: blocks, stop sentence, table" begin
+    tr = dfp(P1i, [0.0, 0.0]; steps = 2)
+    @test latex(tr) == join(latex.(tr.steps), "\n") * "\n" *
+                       raw"$g_{2} = 0$, so the method stops at $x_{2} = x^*$." * "\n\n" *
+                       raw"\medskip" * "\n" * latex_table(tr)
+end
