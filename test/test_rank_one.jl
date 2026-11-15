@@ -9,12 +9,12 @@ using LinearAlgebra: I
     @test s0.Fx == 0.0
     @test s0.g ≈ [-14, -19]
     @test s0.M == Matrix(1.0I, 2, 2)                  # B₀ = I
-    @test s0.d ≈ [14, 19]                             # d₀ = −B₀⁻¹g₀ = −g₀
-    @test s0.α ≈ α_quadratic(H1i, s0.g, s0.d)         # exact line search
+    @test s0.p ≈ [14, 19]                             # p₀ = −B₀⁻¹g₀ = −g₀
+    @test s0.α ≈ α_quadratic(H1i, s0.g, s0.p)         # exact line search
     @test s0.ls.α == s0.α
     for s in tr.steps
-        @test s.M * s.d ≈ -s.g                        # dₖ = −Bₖ⁻¹gₖ
-        @test s.s ≈ s.α * s.d
+        @test s.M * s.p ≈ -s.g                        # pₖ = −Bₖ⁻¹gₖ
+        @test s.s ≈ s.α * s.p
         @test s.y ≈ ∇F1i(s.x + s.s) - s.g
         z = s.y - s.M * s.s                           # z = yₖ − Bₖsₖ
         @test s.M₊ ≈ s.M + z * z' / dot(z, s.s)        # rank-one update

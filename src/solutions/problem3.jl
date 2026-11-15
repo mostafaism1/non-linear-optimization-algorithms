@@ -31,7 +31,7 @@ function p3(; digits = 2)
     \\paragraph{Third step.} In iteration \$k=1\$, \$p_{1} = -g_{1}\$: the second step is also a
     steepest-descent step, so two steps do not reach \$x^*\$. But \$B_{$n} = H\$, so the next step is
     the Newton step:
-    \\[ p_{2} = -B_{2}^{-1} g_{2} = $(f(t.d)), \\quad \\alpha_{2} = $(f(t.α)), \\quad
+    \\[ p_{2} = -B_{2}^{-1} g_{2} = $(f(t.p)), \\quad \\alpha_{2} = $(f(t.α)), \\quad
        x_{3} = $(f(C.x)) = x^* . \\]
 
     \\paragraph{Comparison with Problem 2.}

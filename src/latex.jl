@@ -113,7 +113,7 @@ end
 """
     latex(s::QNStep; digits = 2) -> String
 
-Derivation block for one quasi-Newton iteration: x, F, g, d, φ(α), φ′(α) = 0 ⇒ α, s and the
+Derivation block for one quasi-Newton iteration: x, F, g, p, φ(α), φ′(α) = 0 ⇒ α, s and the
 next x, y, then the matrix update of the method.
 """
 function latex(s::QNStep{U}; digits = 2) where {U}
@@ -121,16 +121,13 @@ function latex(s::QNStep{U}; digits = 2) where {U}
     xk, gk, pk, αk = "x_{$k}", "g_{$k}", "p_{$k}", "\\alpha_{$k}"
     return iteration_block(k, [
         point_lines(s, f)...,
-        "$pk &= $(direction_tex(U(), k)) = $(f(s.d))",
+        "$pk &= $(direction_tex(U(), k)) = $(f(s.p))",
         linesearch_lines(s, pk, f, digits)...,
         "s_{$k} &= $αk $pk = $(f(s.s)), \\quad x_{$(k+1)} = $xk + s_{$k} = $(f(s.x + s.s))",
         "y_{$k} &= g_{$(k+1)} - $gk = $(f(s.y))",
         update_lines(U(), s, f)...,
     ])
 end
-
-search_dir(s::CGStep) = s.p
-search_dir(s::QNStep) = s.d
 
 """Columns that only some methods have: βₖ for Fletcher–Reeves CG (β₀ shown as "---")."""
 extra_header(::Type)                            = String[]
@@ -150,7 +147,7 @@ function latex_table(tr::Trace{S}; digits = 2) where {S}
     extra = extra_header(S)
     return tabular(["\$k\$", "\$x_k\$", "\$F(x_k)\$", extra..., "\$p_k\$", "\$\\alpha_k\$",
                     "\$\\|x_{k+1} - x_k\\|\$"],
-                   [[[s.k, m(s.x), m(s.Fx), extra_cells(s, m)..., m(search_dir(s)),
-                      m(s.α; d = digits + 2), m(norm(s.α * search_dir(s)))] for s in tr.steps];
+                   [[[s.k, m(s.x), m(s.Fx), extra_cells(s, m)..., m(s.p),
+                      m(s.α; d = digits + 2), m(norm(s.α * s.p))] for s in tr.steps];
                     [[length(tr.steps), m(tr.x), m(tr.Fx), fill("---", length(extra) + 3)...]]])
 end
