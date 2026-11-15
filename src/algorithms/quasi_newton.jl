@@ -29,10 +29,11 @@ end
         -> Trace{QNStep{typeof(update)}}
 
 Quasi-Newton method with M₀ = I: dₖ = `direction(update, Mₖ, gₖ)`, xₖ₊₁ = xₖ + αₖdₖ,
-then Mₖ₊₁ = `update(Mₖ, sₖ, yₖ)`. Stops early once ‖gₖ‖ ≤ `gtol`.
+then Mₖ₊₁ = `update(Mₖ, sₖ, yₖ)`. Stops early once ‖gₖ‖ ≤ `gtol` (`:converged`) or once
+a step has ‖sₖ‖ ≤ `xtol` (`:small_step`).
 """
 function quasi_newton(P::Problem, x0; steps, update,
-                      linesearch = calculus_linesearch(P), gtol = 1e-10)
+                      linesearch = calculus_linesearch(P), gtol = 1e-10, xtol = 0.0)
     x = float.(x0)
     M = Matrix(1.0I, length(x), length(x))
     records = QNStep{typeof(update)}[]
@@ -46,6 +47,7 @@ function quasi_newton(P::Problem, x0; steps, update,
         M₊ = update(M, s, y)
         push!(records, QNStep{typeof(update)}(k, x, P.F(x), g, M, d, ls.α, ls, s, y, M₊))
         x, M = x + s, M₊
+        norm(s) ≤ xtol && return Trace(records, x, P.F(x), :small_step)
     end
     return Trace(records, x, P.F(x), norm(P.∇F(x)) ≤ gtol ? :converged : :max_steps)
 end

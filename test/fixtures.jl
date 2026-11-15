@@ -12,3 +12,8 @@ const P1i = Problem(2x^2 + x*y + 4y^2 - 14x - 19y, [x, y])
 
 @variables x1 x2
 const P1ii = Problem(2x1^2 * x2^2 + (x1 - 2)^2 + (x2 - 1)^2, [x1, x2])
+
+# Problem (4): F = 20x₁² + 6x₁x₂ + 5x₂² − 62x₁ − 34x₂,  H = [40 6; 6 10],  x* = H \ (62, 34)
+const H4 = [40.0 6.0; 6.0 10.0]
+const x4 = H4 \ [62.0, 34.0]
+const P4 = Problem(20x1^2 + 6x1*x2 + 5x2^2 - 62x1 - 34x2, [x1, x2])
