@@ -32,3 +32,10 @@ end
     @test calculus_linesearch(P4)(nt.steps[1].x, nt.steps[1].d).α ≈ 1   # line search on −H⁻¹g gives α = 1
     @test nt.x ≈ x4
 end
+
+@testset "The β rule is part of the step type" begin
+    @test conjugate_gradient(P1i, [0.0, 0.0]; steps = 1) isa Trace{CGStep{FletcherReeves}}
+    @test steepest_descent(P1i, [0.0, 0.0]; steps = 1) isa Trace{CGStep{SteepestDescent}}
+    @test FletcherReeves()([3.0, 4.0], [0.0, 5.0]) ≈ 1.0
+    @test SteepestDescent()([3.0, 4.0], [0.0, 5.0]) == 0.0
+end
