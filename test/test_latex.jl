@@ -33,3 +33,13 @@ end
     \end{align*}
     """
 end
+
+@testset "CG iteration block, k ≥ 1: Fletcher–Reeves β and p" begin
+    tr = conjugate_gradient(P1i, [0.0, 0.0]; steps = 3)
+    s1 = latex(tr.steps[2])
+    # β₁ = ‖g₁‖²/‖g₀‖² ≈ 25.4710/557 ≈ 0.0457;  p₁ = −g₁ + β₁p₀ ≈ (4.70, −2.12)
+    @test occursin(raw"\beta_{1} &= \frac{\|g_{1}\|^2}{\|g_{0}\|^2} = 0.05\\", s1)
+    @test occursin(raw"p_{1} &= -g_{1} + \beta_{1} p_{0} = (4.70,\ -2.12)^T\\", s1)
+    @test !occursin("p_{1} &= -g_{1} =", s1)
+    @test !occursin(raw"\beta", latex(tr.steps[1]))       # k = 0: no β line
+end

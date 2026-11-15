@@ -42,7 +42,9 @@ function latex(s::CGStep; digits = 2)
     lines = [
         "$xk &= $(f(s.x)), \\quad F($xk) = $(f(s.Fx))",
         "$gk &= \\nabla F($xk) = $(f(s.g))",
-        "$pk &= -$gk = $(f(s.p))",
+        (k == 0 ? ["$pk &= -$gk = $(f(s.p))"] :
+         ["\\beta_{$k} &= \\frac{\\|$gk\\|^2}{\\|g_{$(k-1)}\\|^2} = $(f(s.β))",
+          "$pk &= -$gk + \\beta_{$k} p_{$(k-1)} = $(f(s.p))"])...,
         "\\varphi(\\alpha) &= F($xk + \\alpha $pk) = $(fmt_poly(poly_coeffs(s.ls.φ); digits))",
         "\\varphi'(\\alpha) &= $(fmt_poly(poly_coeffs(s.ls.dφ); digits)) = 0 \\;\\Rightarrow\\; $αk = $(f(s.α))",
         "x_{$(k+1)} &= $xk + $αk $pk = $(f(s.x + s.α * s.p))",
