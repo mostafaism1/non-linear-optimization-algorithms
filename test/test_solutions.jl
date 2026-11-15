@@ -7,3 +7,18 @@
     @test occursin("converges in at most \$n = 2\$ steps", tex)       # theory remark
     @test occursin(raw"x^* = (3.00,\ 2.00)^T, \quad F^* = -40.00", tex)   # actual minimum
 end
+
+@testset "write_solutions: fragments + main.tex that compiles" begin
+    mktempdir() do dir
+        write_solutions(dir)
+        @test read(joinpath(dir, "p1i.tex"), String) == p1i()
+        main = read(joinpath(dir, "main.tex"), String)
+        @test occursin(raw"\input{p1i}", main)
+        @test occursin(raw"\usepackage{amsmath}", main)
+        if Sys.which("latexmk") !== nothing
+            ok = success(Cmd(`latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex`; dir))
+            @test ok
+            @test isfile(joinpath(dir, "main.pdf"))
+        end
+    end
+end

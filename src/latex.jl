@@ -77,5 +77,6 @@ function latex(tr::Trace{CGStep}; digits = 2)
     n = length(tr.steps)
     stop = tr.status == :converged ?
         "\$g_{$n} = 0\$, so the method stops at \$x_{$n} = x^*\$.\n\n" : "\n"
-    return join((latex(s; digits) for s in tr.steps), "\n") * "\n" * stop * latex_table(tr; digits)
+    return join((latex(s; digits) for s in tr.steps), "\n") * "\n" * stop *
+           "\\medskip\n" * latex_table(tr; digits)
 end

@@ -1,3 +1,6 @@
 # nWave config (keep .nwave/config.json trackable)
 .nwave/*
 !.nwave/config.json
+
+# Generated LaTeX output (rebuild: julia --project=. make.jl && cd tex && latexmk -pdf main.tex)
+/tex/
