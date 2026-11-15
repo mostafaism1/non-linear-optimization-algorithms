@@ -33,7 +33,7 @@ function p4(; digits = 2)
     \\paragraph{(i) Steepest descent.} \$p_k = -g_k\$.
 
     \\medskip
-    $(latex_search_table(sd; digits))
+    $(latex_table(sd; digits))
     Successive directions are orthogonal, so the path zig-zags to \$x^*\$. Search \$k = $(n_sd - 1)\$
     gives \$\\|x_{$n_sd} - x_{$(n_sd - 1)}\\| = $(f(last_sd)) \\le 0.1\$: \\textbf{$n_sd searches}.
 
@@ -41,7 +41,7 @@ function p4(; digits = 2)
     \$p_{k+1} = -g_{k+1} + (\\|g_{k+1}\\| / \\|g_k\\|)^2 p_k\$.
 
     \\medskip
-    $(latex_search_table(cg; digits))
+    $(latex_table(cg; digits))
     \$p_0 = -g_0\$, so the first search is the steepest-descent search. The directions are
     \$H\$-conjugate, so on a quadratic in \$n = 2\$ variables CG reaches \$x^*\$ after at most
     \$n\$ searches: \$g_{$n_cg} = 0\$, \\textbf{$n_cg searches}.
@@ -54,7 +54,7 @@ function p4(; digits = 2)
     \\paragraph{(iv) Broyden.} \$B_0 = I\$, \$p_k = -B_k^{-1} g_k\$.
 
     \\medskip
-    $(latex_search_table(br; digits))
+    $(latex_table(br; digits))
     As in Problem 3: \$B_0 = I\$ gives the steepest-descent step. Then \$s_0^T g_1 = 0\$, so
     \$B_1 g_1 = g_1\$ and \$p_1 = -g_1\$: the second step is also the steepest-descent step
     (\$x_1\$, \$x_2\$ are the same as in (i)). Now

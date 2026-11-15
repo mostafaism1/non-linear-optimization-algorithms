@@ -47,11 +47,11 @@ end
 @testset "CG summary table (1(i))" begin
     tr = conjugate_gradient(P1i, [0.0, 0.0]; steps = 3)
     @test latex_table(tr) == raw"""
-    \begin{tabular}{c|cccc}
-      $k$ & $x_k$ & $F(x_k)$ & $\beta_k$ & $\alpha_k$ \\ \hline
-      0 & $(0.00,\ 0.00)^T$ & $0.00$ & --- & $0.13$ \\
-      1 & $(1.85,\ 2.52)^T$ & $-36.90$ & $0.05$ & $0.24$ \\
-      2 & $(3.00,\ 2.00)^T$ & $-40.00$ & --- & --- \\
+    \begin{tabular}{c|cccccc}
+      $k$ & $x_k$ & $F(x_k)$ & $\beta_k$ & $p_k$ & $\alpha_k$ & $\|x_{k+1} - x_k\|$ \\ \hline
+      0 & $(0.00,\ 0.00)^T$ & $0.00$ & --- & $(14.00,\ 19.00)^T$ & $0.1325$ & $3.13$ \\
+      1 & $(1.85,\ 2.52)^T$ & $-36.90$ & $0.05$ & $(4.70,\ -2.12)^T$ & $0.2435$ & $1.26$ \\
+      2 & $(3.00,\ 2.00)^T$ & $-40.00$ & --- & --- & --- & --- \\
     \end{tabular}
     """
 end
@@ -111,11 +111,11 @@ end
 @testset "quasi-Newton summary table (DFP, 1(i))" begin
     tr = dfp(P1i, [0.0, 0.0]; steps = 2)
     @test latex_table(tr) == raw"""
-    \begin{tabular}{c|ccc}
-      $k$ & $x_k$ & $F(x_k)$ & $\alpha_k$ \\ \hline
-      0 & $(0.00,\ 0.00)^T$ & $0.00$ & $0.13$ \\
-      1 & $(1.85,\ 2.52)^T$ & $-36.90$ & $0.25$ \\
-      2 & $(3.00,\ 2.00)^T$ & $-40.00$ & --- \\
+    \begin{tabular}{c|ccccc}
+      $k$ & $x_k$ & $F(x_k)$ & $p_k$ & $\alpha_k$ & $\|x_{k+1} - x_k\|$ \\ \hline
+      0 & $(0.00,\ 0.00)^T$ & $0.00$ & $(14.00,\ 19.00)^T$ & $0.1325$ & $3.13$ \\
+      1 & $(1.85,\ 2.52)^T$ & $-36.90$ & $(4.50,\ -2.03)^T$ & $0.2546$ & $1.26$ \\
+      2 & $(3.00,\ 2.00)^T$ & $-40.00$ & --- & --- & --- \\
     \end{tabular}
     """
 end
@@ -127,15 +127,10 @@ end
                        raw"\medskip" * "\n" * latex_table(tr)
 end
 
-@testset "LaTeX — search table with step lengths (Problem 4)" begin
-    tr  = steepest_descent(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)
-    tex = latex_search_table(tr)
-    @test occursin("\$\\|x_{k+1} - x_k\\|\$", tex)
-    @test occursin("0 & \$(0.00,\\ 0.00)^T\$ & \$(62.00,\\ 34.00)^T\$ & \$0.0262\$ & \$1.85\$ \\\\", tex)
-    @test occursin("4 & \$(1.10,\\ 2.61)^T\$", tex)
+@testset "steepest-descent table: no β column (Problem 4)" begin
+    tex = latex_table(steepest_descent(P4, [0.0, 0.0]; steps = 50, xtol = 0.1))
+    @test !occursin("beta", tex)
+    @test occursin("0 & \$(0.00,\\ 0.00)^T\$ & \$0.00\$ & \$(62.00,\\ 34.00)^T\$ & \$0.0262\$ & \$1.85\$ \\\\", tex)
     @test occursin("& \$0.07\$ \\\\", tex)
-    @test occursin("5 & \$(1.16,\\ 2.64)^T\$ & --- & --- & --- \\\\", tex)
-
-    qn = latex_search_table(broyden(P4, [0.0, 0.0]; steps = 50, xtol = 0.1))
-    @test occursin("3 & \$(1.14,\\ 2.71)^T\$ & --- & --- & --- \\\\", qn)
+    @test occursin("5 & \$(1.16,\\ 2.64)^T\$ & \$-81.55\$ & --- & --- & --- \\\\", tex)
 end

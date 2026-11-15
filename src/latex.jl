@@ -68,36 +68,11 @@ function latex(s::CGStep; digits = 2)
     ])
 end
 
-"""
-    latex_table(tr::Trace{<:CGStep}; digits = 2) -> String
-
-Summary table: one row per iteration (k, xₖ, F(xₖ), βₖ, αₖ) plus a final row for the end point.
-β₀ and the end point's β, α are shown as "---".
-"""
-function latex_table(tr::Trace{<:CGStep}; digits = 2)
-    m(v) = "\$" * fmt(v; digits) * "\$"
-    return tabular(["\$k\$", "\$x_k\$", "\$F(x_k)\$", "\$\\beta_k\$", "\$\\alpha_k\$"],
-                   [[[s.k, m(s.x), m(s.Fx), s.k == 0 ? "---" : m(s.β), m(s.α)] for s in tr.steps];
-                    [[length(tr.steps), m(tr.x), m(tr.Fx), "---", "---"]]])
-end
-
 """`tabular` with a `c|c…c` layout: header row, `\\hline`, then one line per row of cells."""
 function tabular(header, rows)
     row(cells) = "  " * join(cells, " & ") * " \\\\"
     return "\\begin{tabular}{c|$("c"^(length(header) - 1))}\n" *
            join([row(header) * " \\hline"; row.(rows)], "\n") * "\n\\end{tabular}\n"
-end
-
-"""
-    latex_table(tr::Trace{<:QNStep}; digits = 2) -> String
-
-Summary table: one row per iteration (k, xₖ, F(xₖ), αₖ) plus a final row for the end point.
-"""
-function latex_table(tr::Trace{<:QNStep}; digits = 2)
-    m(v) = "\$" * fmt(v; digits) * "\$"
-    return tabular(["\$k\$", "\$x_k\$", "\$F(x_k)\$", "\$\\alpha_k\$"],
-                   [[[s.k, m(s.x), m(s.Fx), m(s.α)] for s in tr.steps];
-                    [[length(tr.steps), m(tr.x), m(tr.Fx), "---"]]])
 end
 
 """
@@ -157,16 +132,25 @@ end
 search_dir(s::CGStep) = s.p
 search_dir(s::QNStep) = s.d
 
-"""
-    latex_search_table(tr; digits = 2) -> String
+"""Columns that only some methods have: βₖ for Fletcher–Reeves CG (β₀ shown as "---")."""
+extra_header(::Type)                            = String[]
+extra_header(::Type{CGStep{FletcherReeves}})    = ["\$\\beta_k\$"]
+extra_cells(s, m)                               = String[]
+extra_cells(s::CGStep{FletcherReeves}, m)       = [s.k == 0 ? "---" : m(s.β)]
 
-One row per line search (k, xₖ, pₖ, αₖ, ‖xₖ₊₁ − xₖ‖) plus a final row for the end point.
-αₖ gets two more decimals than the rest, since short steps round to almost nothing.
 """
-function latex_search_table(tr::Trace; digits = 2)
+    latex_table(tr::Trace{S}; digits = 2) -> String
+
+Summary table: one row per line search (k, xₖ, F(xₖ), the method's extra columns, pₖ, αₖ,
+‖xₖ₊₁ − xₖ‖) plus a final row for the end point. αₖ gets two more decimals than the rest,
+since short steps round to almost nothing.
+"""
+function latex_table(tr::Trace{S}; digits = 2) where {S}
     m(v; d = digits) = "\$" * fmt(v; digits = d) * "\$"
-    return tabular(["\$k\$", "\$x_k\$", "\$p_k\$", "\$\\alpha_k\$", "\$\\|x_{k+1} - x_k\\|\$"],
-                   [[[s.k, m(s.x), m(search_dir(s)), m(s.α; d = digits + 2), m(norm(s.α * search_dir(s)))]
-                     for s in tr.steps];
-                    [[length(tr.steps), m(tr.x), "---", "---", "---"]]])
+    extra = extra_header(S)
+    return tabular(["\$k\$", "\$x_k\$", "\$F(x_k)\$", extra..., "\$p_k\$", "\$\\alpha_k\$",
+                    "\$\\|x_{k+1} - x_k\\|\$"],
+                   [[[s.k, m(s.x), m(s.Fx), extra_cells(s, m)..., m(search_dir(s)),
+                      m(s.α; d = digits + 2), m(norm(s.α * search_dir(s)))] for s in tr.steps];
+                    [[length(tr.steps), m(tr.x), m(tr.Fx), fill("---", length(extra) + 3)...]]])
 end
