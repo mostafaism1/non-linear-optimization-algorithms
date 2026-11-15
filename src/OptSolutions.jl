@@ -3,7 +3,7 @@ module OptSolutions
 using LinearAlgebra
 using Symbolics
 
-export Problem, Trace, CGStep, conjugate_gradient, calculus_linesearch, LineSearchStep, newton, NewtonStep, quasi_newton, QNStep, dfp, rank_one, fmt, fmt_poly, latex, latex_table, p1i, p1ii, write_solutions
+export Problem, Trace, CGStep, conjugate_gradient, calculus_linesearch, LineSearchStep, newton, NewtonStep, quasi_newton, QNStep, DFP, RankOne, dfp, rank_one, fmt, fmt_poly, latex, latex_table, p1i, p1ii, write_solutions
 
 include("trace.jl")
 include("problem.jl")
