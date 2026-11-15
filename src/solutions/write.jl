@@ -1,5 +1,5 @@
 """Fragments in assignment order: file name (without .tex) => generator."""
-const FRAGMENTS = ["p1i" => p1i]
+const FRAGMENTS = ["p1i" => p1i, "p1ii" => p1ii]
 
 const MAIN_TEX = raw"""
 \documentclass[11pt]{article}
@@ -10,7 +10,7 @@ const MAIN_TEX = raw"""
 \begin{document}
 \maketitle
 \section*{Problem 1}
-""" * join(("\\input{$name}" for (name, _) in FRAGMENTS), "\n") * raw"""
+""" * join(("\\input{$name}" for (name, _) in FRAGMENTS), "\n\\clearpage\n") * raw"""
 
 \end{document}
 """
