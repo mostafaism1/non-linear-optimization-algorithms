@@ -245,9 +245,13 @@ end
     end
 end
 
-@testset "p4: the zero gradient that stops CG and Newton is computed, not only stated" begin
+@testset "p4: CG and Newton start the next iteration to show that it does not move" begin
     tex = p4()
-    @test occursin(raw"$g_{2} = \nabla F(x_{2}) = (0.00,\ 0.00)^T$", tex)   # CG
-    @test occursin(raw"$g_{1} = \nabla F(x_{1}) = (0.00,\ 0.00)^T$", tex)   # Newton
+    @test occursin(raw"g_{2} &= \nabla F(x_{2}) = (0.00,\ 0.00)^T", tex)         # CG
+    @test occursin(raw"p_{2} &= -g_{2} + \beta_{2} p_{1} = (0.00,\ 0.00)^T", tex)
+    @test occursin(raw"$p_{2} = 0$, so the step does not move: $x_{3} = x_{2} = x^*$.", tex)
+    @test occursin(raw"g_{1} &= \nabla F(x_{1}) = (0.00,\ 0.00)^T", tex)         # Newton
+    @test occursin(raw"p_{1} &= -H^{-1} g_{1} = (0.00,\ 0.00)^T", tex)
+    @test occursin(raw"$p_{1} = 0$, so the step does not move: $x_{2} = x_{1} = x^*$.", tex)
     @test !occursin(raw"$g_{2} = 0$", tex) && !occursin(raw"$g_{1} = 0$", tex)
 end

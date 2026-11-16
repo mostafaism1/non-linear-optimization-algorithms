@@ -28,7 +28,8 @@ function p1i(; digits = 2)
 
     \paragraph{Comments.} $F$ is quadratic with positive definite Hessian
     $H = \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}$, so CG with exact line searches
-    converges in at most $n = 2$ steps. CG reached $x^*$ exactly in two steps; no third step is needed.
+    converges in at most $n = 2$ steps. CG reached $x^*$ exactly in two steps; the third direction is
+    $p_2 = 0$, so the third step does not move.
     """ * """
 
     \\paragraph{Path.} The grey contours pass through \$x_0\$ and \$x_1\$. The first search stops where

@@ -88,15 +88,37 @@ function tabular(header, rows)
            join([row(header) * " \\hline"; row.(rows)], "\n") * "\n\\end{tabular}\n"
 end
 
+"""Direction lines at the end point xₙ of `tr`, by step type: the start of the iteration that is not needed."""
+end_direction_lines(tr::Trace{CGStep{SteepestDescent}}, n, f) = ["p_{$n} &= -g_{$n} = $(f(-tr.g))"]
+
+function end_direction_lines(tr::Trace{CGStep{FletcherReeves}}, n, f)
+    prev = tr.steps[end]
+    β = FletcherReeves()(tr.g, prev.g)
+    return ["\\beta_{$n} &= \\frac{\\|g_{$n}\\|^2}{\\|g_{$(n-1)}\\|^2} = $(f(β))",
+            "p_{$n} &= -g_{$n} + \\beta_{$n} p_{$(n-1)} = $(f(-tr.g + β * prev.p))"]
+end
+
+end_direction_lines(tr::Trace{QNStep{U}}, n, f) where {U} =
+    ["p_{$n} &= $(direction_tex(U(), n)) = $(f(direction(U(), tr.steps[end].M₊, tr.g)))"]
+
+"""Sentence after a zero direction pₙ: the step does not move, so xₙ₊₁ = xₙ = x*."""
+no_move(n) = "\$p_{$n} = 0\$, so the step does not move: \$x_{$(n+1)} = x_{$n} = x^*\$.\n"
+
+"""Iteration block at the end point of `tr` (gₙ = 0): xₙ, F, gₙ and the zero direction pₙ, then `no_move`."""
+function end_block(tr::Trace, f)
+    n = length(tr.steps)
+    return iteration_block(n, [point_lines((k = n, x = tr.x, Fx = tr.Fx, g = tr.g), f)...,
+                               end_direction_lines(tr, n, f)...]) * no_move(n)
+end
+
 """
     latex(tr::Trace; digits = 2) -> String
 
-All iteration blocks, then (if the run converged) the stop sentence, then the summary table.
+All iteration blocks, then (if the run converged) the started next iteration with its zero
+direction, then the summary table.
 """
 function latex(tr::Trace; digits = 2)
-    n = length(tr.steps)
-    stop = tr.status == :converged ?
-        "\$g_{$n} = \\nabla F(x_{$n}) = $(fmt(tr.g; digits))\$, so the method stops at \$x_{$n} = x^*\$.\n\n" : "\n"
+    stop = tr.status == :converged ? end_block(tr, v -> fmt(v; digits)) * "\n" : "\n"
     return join((latex(s; digits) for s in tr.steps), "\n") * "\n" * stop *
            "\\medskip\n" * latex_table(tr; digits)
 end

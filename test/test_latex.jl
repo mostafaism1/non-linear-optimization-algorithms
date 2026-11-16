@@ -59,9 +59,18 @@ end
 @testset "whole CG trace: blocks, stop sentence, table" begin
     tr = conjugate_gradient(P1i, [0.0, 0.0]; steps = 3)
     out = latex(tr)
-    @test out == join(latex.(tr.steps), "\n") * "\n" *
-                 raw"$g_{2} = \nabla F(x_{2}) = (0.00,\ 0.00)^T$, so the method stops at $x_{2} = x^*$." * "\n\n" *
-                 raw"\medskip" * "\n" * latex_table(tr)          # space before the table
+    # g₂ = 0: iteration k = 2 is started to show that its direction is zero
+    @test out == join(latex.(tr.steps), "\n") * "\n" * raw"""
+        \paragraph{Iteration $k=2$}
+        \begin{align*}
+          x_{2} &= (3.00,\ 2.00)^T, \quad F(x_{2}) = -40.00\\
+          g_{2} &= \nabla F(x_{2}) = (0.00,\ 0.00)^T\\
+          \beta_{2} &= \frac{\|g_{2}\|^2}{\|g_{1}\|^2} = 0.00\\
+          p_{2} &= -g_{2} + \beta_{2} p_{1} = (0.00,\ 0.00)^T
+        \end{align*}
+        $p_{2} = 0$, so the step does not move: $x_{3} = x_{2} = x^*$.
+
+        """ * raw"\medskip" * "\n" * latex_table(tr)          # space before the table
 
     short = conjugate_gradient(P1i, [0.0, 0.0]; steps = 1)   # :max_steps ⇒ no stop sentence
     @test !occursin("stops", latex(short))
@@ -122,9 +131,18 @@ end
 
 @testset "whole quasi-Newton trace: blocks, stop sentence, table" begin
     tr = dfp(P1i, [0.0, 0.0]; steps = 2)
-    @test latex(tr) == join(latex.(tr.steps), "\n") * "\n" *
-                       raw"$g_{2} = \nabla F(x_{2}) = (0.00,\ 0.00)^T$, so the method stops at $x_{2} = x^*$." * "\n\n" *
-                       raw"\medskip" * "\n" * latex_table(tr)
+    @test latex(tr) == join(latex.(tr.steps), "\n") * "\n" * raw"""
+        \paragraph{Iteration $k=2$}
+        \begin{align*}
+          x_{2} &= (3.00,\ 2.00)^T, \quad F(x_{2}) = -40.00\\
+          g_{2} &= \nabla F(x_{2}) = (0.00,\ 0.00)^T\\
+          p_{2} &= -A_{2} g_{2} = (0.00,\ 0.00)^T
+        \end{align*}
+        $p_{2} = 0$, so the step does not move: $x_{3} = x_{2} = x^*$.
+
+        """ * raw"\medskip" * "\n" * latex_table(tr)
+    # direct updates solve B p = -g
+    @test occursin(raw"p_{2} &= -B_{2}^{-1} g_{2} = (0.00,\ 0.00)^T", latex(rank_one(P1i, [0.0, 0.0]; steps = 2)))
 end
 
 @testset "steepest-descent table: no β column (Problem 4)" begin
