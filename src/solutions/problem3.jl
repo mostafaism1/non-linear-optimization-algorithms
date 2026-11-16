@@ -44,16 +44,9 @@ function p3(; digits = 2)
     \\[ p_{2} = -B_{2}^{-1} g_{2} = $(f(t.p)), \\quad \\alpha_{2} = $(f(t.α)), \\quad
        x_{3} = $(f(C.x)) = x^* . \\]
 
-    \\paragraph{(iii) Comments.} Comparison with Problem 2:
-    \\begin{itemize}
-      \\item All three updates satisfy the quasi-Newton condition and start from the identity,
-            so the first step is \$p_0 = -g_0\$.
-      \\item DFP and the rank-one update reach \$x^*\$ in \$n = 2\$ steps. Broyden needs $(length(C.steps)) steps on this
-            problem: its second step is also a steepest-descent step.
-      \\item DFP and the rank-one update keep the matrix symmetric. Broyden does not
-            (here \$B_1 = $(f(B.steps[1].M₊))\$).
-      \\item Broyden needs only \$s_k^T s_k \\neq 0\$, which holds for every nonzero step.
-    \\end{itemize}
+    \\paragraph{(iii) Comments.} DFP and the rank-one update reach \$x^*\$ in \$n = 2\$ steps. Broyden
+    needs $(length(C.steps)), because its second step is also a steepest-descent step. Also, DFP and the
+    rank-one update keep the matrix symmetric, but Broyden does not (see \$B_1\$).
 
     """ * captioned(latex_plot(P.F, [dfp(P, [0.0, 0.0]; steps = 2), C]; xlim = (-0.3, 4.0), ylim = (-0.3, 3.0),
                  levels = [s.Fx for s in C.steps]), """

@@ -100,7 +100,7 @@ end
     @test occursin(raw"\alpha_{2} = 1.00", tex)
     @test occursin(raw"x_{3} = (3.00,\ 2.00)^T = x^*", tex)
     # comparison with Problem 2
-    @test occursin(raw"\paragraph{(iii) Comments.} Comparison with Problem 2:", tex)
+    @test occursin(raw"\paragraph{(iii) Comments.} DFP and the rank-one update reach $x^*$ in $n = 2$ steps.", tex)
 end
 
 @testset "write_solutions includes p3 after p2" begin
@@ -291,4 +291,10 @@ end
     @test occursin(raw"\usepackage{caption}", OptSolutions.MAIN_TEX)
     @test occursin(raw"\captionsetup{labelfont=bf}", OptSolutions.MAIN_TEX)      # bold "Figure n:"
     @test startswith(OptSolutions.captioned("P\n", "C"), raw"\bigskip")             # space above the plot
+end
+
+@testset "p3 comments: plain sentences, no list" begin
+    tex = p3()
+    @test !occursin(raw"\begin{itemize}", tex)
+    @test occursin("Broyden\nneeds 3, because", tex)
 end
