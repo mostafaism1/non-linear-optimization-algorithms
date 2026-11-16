@@ -40,6 +40,7 @@ end
     @test occursin(raw"F(x_{3}) = 0.8867", tex)
     @test occursin(raw"F^* = 0.8863", tex)
     @test occursin(raw"\|x_{3} - x^*\| = 0.0122", tex)
+    @test occursin("\\addlegendentry{Conjugate gradient}", tex)       # path plot
 end
 
 @testset "write_solutions includes p1ii after p1i" begin

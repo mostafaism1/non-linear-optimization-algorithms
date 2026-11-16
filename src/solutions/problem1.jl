@@ -69,5 +69,14 @@ function p1ii(; digits = 2, cmp_digits = 4)
     \\paragraph{Comments.} \$F\$ is not quadratic, so CG has no finite-termination guarantee.
     After three steps (to $cmp_digits decimal places):
     \\[ F(x_{$n}) = $(g(tr.Fx)), \\quad F^* = $(g(nt.Fx)), \\quad \\|x_{$n} - x^*\\| = $(g(norm(tr.x - nt.x))). \\]
+
+    \\paragraph{Path.} The grey contours pass through \$x_0\$, \$x_1\$ and \$x_2\$. \$F\$ is not quadratic,
+    so the contours are not ellipses. Each search stops where its line touches the contour through
+    the next point. The last point is \$x_{$n}\$; \$x^*\$ is only $(g(norm(tr.x - nt.x))) from it, so
+    in the figure the two points are at the same position.
+
+    \\begin{center}
+    $(latex_plot(P.F, [tr]; xlim = (-0.3, 2.3), ylim = (-0.3, 1.0), levels = [s.Fx for s in tr.steps]))
+    \\end{center}
     """
 end
