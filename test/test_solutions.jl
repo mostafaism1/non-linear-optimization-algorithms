@@ -255,3 +255,11 @@ end
     @test occursin(raw"$p_{1} = 0$, so the step does not move: $x_{2} = x_{1} = x^*$.", tex)
     @test !occursin(raw"$g_{2} = 0$", tex) && !occursin(raw"$g_{1} = 0$", tex)
 end
+
+@testset "CG is spelled in full at its first use in each problem" begin
+    for tex in (p1i(), p4())
+        @test findfirst("CG", tex).start == findfirst("(CG)", tex).start + 1   # first CG is the definition
+    end
+    @test occursin("as the conjugate gradient method in Problem 1(i)", p2())  # one use only: no abbreviation
+    @test !occursin("CG", p2()) && !occursin("CG", p3())
+end

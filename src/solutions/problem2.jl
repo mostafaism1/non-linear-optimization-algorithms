@@ -78,7 +78,7 @@ function p2(; digits = 2)
     \\end{itemize}
 
     \\paragraph{Paths.} On a quadratic with exact line searches and \$A_0 = B_0 = I\$, DFP and the
-    rank-one update give the same points as CG in Problem 1(i), so the two paths lie on one line.
+    rank-one update give the same points as the conjugate gradient method in Problem 1(i), so the two paths lie on one line.
     The grey contours pass through \$x_0\$ and \$x_1\$.
 
     \\begin{center}

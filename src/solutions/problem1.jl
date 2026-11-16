@@ -27,7 +27,7 @@ function p1i(; digits = 2)
     """ * "\\[ x^* = $(f(nt.x)), \\quad F^* = $(f(nt.Fx)). \\]\n" * raw"""
 
     \paragraph{Comments.} $F$ is quadratic with positive definite Hessian
-    $H = \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}$, so CG with exact line searches
+    $H = \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}$, so the conjugate gradient (CG) method with exact line searches
     converges in at most $n = 2$ steps. CG reached $x^*$ exactly in two steps; the third direction is
     $p_2 = 0$, so the third step does not move.
     """ * """

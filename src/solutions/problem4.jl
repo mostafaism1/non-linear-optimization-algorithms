@@ -48,7 +48,7 @@ function p4(; digits = 2)
     Successive directions are orthogonal, so the path zig-zags to \$x^*\$. Search \$k = $(n_sd - 1)\$
     gives \$\\|x_{$n_sd} - x_{$(n_sd - 1)}\\| = $(f(last_sd)) \\le 0.1\$: \\textbf{$n_sd searches}.
 
-    \\paragraph{(ii) Conjugate gradient.} \$p_0 = -g_0\$,
+    \\paragraph{(ii) Conjugate gradient (CG).} \$p_0 = -g_0\$,
     \$p_{k+1} = -g_{k+1} + (\\|g_{k+1}\\| / \\|g_k\\|)^2 p_k\$.
 
     \\medskip
