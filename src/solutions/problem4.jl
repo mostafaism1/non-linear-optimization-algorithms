@@ -8,8 +8,6 @@ function p4(; digits = 2)
     nt  = newton(P, x0; steps = 50)
     ls  = calculus_linesearch(P)(x0, nt.steps[1].d)
     f(v) = fmt(v; digits)
-    H, b = P.H(x0), -P.∇F(x0)
-    xs   = H \ b
     n_sd, n_cg, n_nt, n_br = length(sd.steps), length(cg.steps), length(nt.steps), length(br.steps)
     last_sd = norm(sd.steps[end].α * sd.steps[end].p)
     newton_block = iteration_block(0, [
@@ -32,15 +30,15 @@ function p4(; digits = 2)
         $p_{k+1} = -g_{k+1} + \left(\frac{\|g_{k+1}\|}{\|g_k\|}\right)^2 p_k$.
       \item[(iii)] Newton's method.
       \item[(iv)] Broyden quasi-Newton method.
-    \end{itemize}""") * """
-    The gradient, the Hessian and the minimizer are
-    \\begin{gather*}
-      g = \\nabla F = (40x_1 + 6x_2 - 62,\\ 6x_1 + 10x_2 - 34)^T, \\quad H = $(f(H)), \\\\
-      x^* = H^{-1} $(f(b)) = $(f(xs)).
-    \\end{gather*}
-    Each one-dimensional search is exact (calculus): \$\\varphi(\\alpha) = F(x_k + \\alpha p_k)\$,
-    \$\\varphi'(\\alpha) = 0\$. Stop after the search that gives \$\\|x_{k+1} - x_k\\| \\le 0.1\$,
-    or when \$g_{k+1} = 0\$: then \$x_{k+1} = x^*\$ and every later step is zero.
+    \end{itemize}""") * raw"""
+    \begin{align*}
+      F_{x_1} &= 40x_1 + 6x_2 - 62 \\
+      F_{x_2} &= 6x_1 + 10x_2 - 34 \\
+      g = \nabla F &= (40x_1 + 6x_2 - 62,\ 6x_1 + 10x_2 - 34)^T \\
+      H = \nabla^2 F &= \begin{pmatrix} 40 & 6 \\ 6 & 10 \end{pmatrix}
+    \end{align*}
+    Stop after the search that gives $\|x_{k+1} - x_k\| \le 0.1$, or when $g_{k+1} = 0$.
+    """ * """
 
     \\paragraph{(i) Steepest descent.} \$p_k = -g_k\$.
 

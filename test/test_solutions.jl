@@ -115,7 +115,12 @@ end
 @testset "fragment p4: number of line searches with ‖xₖ₊₁ − xₖ‖ ≤ 0.1" begin
     tex = p4()
     @test startswith(tex, "\\section*{Problem 4}")
-    @test occursin("x^* = H^{-1} (62.00,\\ 34.00)^T = (1.14,\\ 2.71)^T", tex)
+    @test !occursin("H^{-1} (62.00", tex)                  # x* is not asked for; Newton finds it in (iii)
+    @test occursin(raw"F_{x_1} &= 40x_1 + 6x_2 - 62", tex) && occursin(raw"F_{x_2} &= 6x_1 + 10x_2 - 34", tex)
+    @test occursin(raw"g = \nabla F &= (40x_1 + 6x_2 - 62,\ 6x_1 + 10x_2 - 34)^T", tex)
+    @test occursin(raw"H = \nabla^2 F &= \begin{pmatrix} 40 & 6 \\ 6 & 10 \end{pmatrix}", tex)
+    @test occursin(raw"Stop after the search that gives $\|x_{k+1} - x_k\| \le 0.1$, or when $g_{k+1} = 0$.", tex)
+    @test !occursin("Each one-dimensional search is exact", tex)
     @test occursin(latex(steepest_descent(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)   # full working + table
     @test occursin(latex_table(conjugate_gradient(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)
     @test occursin(latex_table(broyden(P4, [0.0, 0.0]; steps = 50, xtol = 0.1)), tex)
