@@ -284,4 +284,6 @@ end
         @test !occursin(raw"\paragraph{Path", tex)
     end
     @test occursin(raw"\usepackage{caption}", OptSolutions.MAIN_TEX)
+    @test occursin(raw"\captionsetup{labelfont=bf}", OptSolutions.MAIN_TEX)      # bold "Figure n:"
+    @test startswith(OptSolutions.captioned("P\n", "C"), raw"\bigskip")             # space above the plot
 end

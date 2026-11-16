@@ -8,6 +8,7 @@ const MAIN_TEX = raw"""
 \usepackage{amsthm}
 \usepackage{pgfplots}
 \usepackage{caption}
+\captionsetup{labelfont=bf}
 \pgfplotsset{compat=1.18}
 \title{MTH-645 Optimization Techniques\\ Assignment (2)}
 \author{}

@@ -107,10 +107,10 @@ no_move(n) = "\$p_{$n} = 0\$, so the step does not move: \$x_{$(n+1)} = x_{$n} =
 """
     captioned(plot, caption)
 
-`plot` with `caption` below it, in a full-width minipage, so that LaTeX does not put a page break
+`plot` with `caption` below it, in a full-width minipage after a `\\bigskip`, so that LaTeX does not put a page break
 between them.
 """
-captioned(plot, caption) = "\\noindent\\begin{minipage}{\\linewidth}\n\\begin{center}\n" * plot *
+captioned(plot, caption) = "\\bigskip\n\\noindent\\begin{minipage}{\\linewidth}\n\\begin{center}\n" * plot *
                            "\\end{center}\n\\captionof{figure}{" * chomp(caption) * "}\n\\end{minipage}\n"
 
 """Iteration block at the end point of `tr` (gₙ = 0): xₙ, F, gₙ and the zero direction pₙ, then `no_move`."""
