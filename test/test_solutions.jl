@@ -70,7 +70,6 @@ end
     @test occursin(latex(B), tex)
     @test occursin(raw"B_{2} s_{1} = (4.06,\ -2.99)^T = y_{1}", tex)
     @test occursin(raw"B_{2} = \begin{pmatrix} 4.00 & 1.00 \\ 1.00 & 8.00 \end{pmatrix} = H", tex)
-    @test occursin(raw"z_k^T s_k", tex) && occursin("64.02", tex) && occursin("4.61", tex)
 end
 
 @testset "write_solutions includes p2 after p1ii" begin
@@ -297,4 +296,10 @@ end
     tex = p3()
     @test !occursin(raw"\begin{itemize}", tex)
     @test occursin("Broyden\nneeds 3, because", tex)
+end
+
+@testset "p2 comments: plain sentences, no list" begin
+    tex = p2()
+    @test !occursin(raw"\begin{itemize}", tex)
+    @test occursin(raw"\paragraph{Comments.} Both methods reach $x^* = (3.00,\ 2.00)^T$ in $n = 2$ steps.", tex)
 end

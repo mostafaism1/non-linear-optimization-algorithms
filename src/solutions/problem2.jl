@@ -9,8 +9,6 @@ function p2(; digits = 2)
     # quasi-Newton condition on the computed numbers, one equation per step
     dfp_check = join(("A_{$(s.k+1)} y_{$(s.k)} = $(f(s.M₊ * s.y)) = s_{$(s.k)}" for s in A.steps), ", \\quad ")
     sr1_check = join(("B_{$(s.k+1)} s_{$(s.k)} = $(f(s.M₊ * s.s)) = y_{$(s.k)}" for s in B.steps), ", \\quad ")
-    zs  = join((f(dot(s.y - s.M * s.s, s.s)) for s in B.steps), " and ")
-    sy  = join((f(dot(s.s, s.y)) for s in A.steps), " and ")
     return problem_head(2, raw"""
     Certify that the following Davidon--Fletcher--Powell (DFP) updating formula satisfies the
     condition for a quasi-Newton method:
@@ -64,19 +62,9 @@ function p2(; digits = 2)
     \\[ $sr1_check. \\]
     After \$n = $n\$ steps, \$B_{$n} = $(f(B.steps[end].M₊)) = H\$.
 
-    \\paragraph{Comments.}
-    \\begin{itemize}
-      \\item Both methods start with the identity (\$A_0 = B_0 = I\$), so the first step is the
-            steepest-descent step \$p_0 = -g_0\$ for both.
-      \\item Both reach \$x^* = $(f(A.x))\$ in \$n = $n\$ steps. DFP builds \$A_{$n} = H^{-1}\$;
-            the rank-one update builds \$B_{$n} = H\$.
-      \\item DFP adds two rank-one terms per step. It keeps \$A_k\$ positive definite when
-            \$s_k^T y_k > 0\$ (here \$s_k^T y_k\$ = $sy).
-      \\item The rank-one update adds one term. It needs \$z_k^T s_k \\neq 0\$
-            (here \$z_k^T s_k\$ = $zs) and does not guarantee that \$B_k\$ stays positive definite.
-      \\item DFP gets \$p_k = -A_k g_k\$ by a matrix--vector product; the rank-one form solves
-            \$B_k p_k = -g_k\$.
-    \\end{itemize}
+    \\paragraph{Comments.} Both methods reach \$x^* = $(f(A.x))\$ in \$n = $n\$ steps. DFP builds
+    \$A_{$n} = H^{-1}\$, and the rank-one update builds \$B_{$n} = H\$. DFP keeps \$A_k\$ positive
+    definite, but the rank-one update does not guarantee this.
 
     """ * captioned(latex_plot(P.F, [A, B]; xlim = (-0.3, 4.0), ylim = (-0.3, 3.0), levels = [s.Fx for s in A.steps]), """
     Paths of DFP and the rank-one update on the contours of \$F\$. On a quadratic with exact line searches and \$A_0 = B_0 = I\$, DFP and the
