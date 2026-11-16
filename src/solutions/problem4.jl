@@ -18,10 +18,18 @@ function p4(; digits = 2)
         linesearch_lines((k = 0, ls = ls, α = ls.α), "p_{0}", f, digits)...,
         "x_{1} &= x_{0} + \\alpha_{0} p_{0} = $(f(x0 + ls.α * nt.steps[1].d)) = x^*",
     ])
-    return """
-    \\section*{Problem 4}
-
-    Minimize \$F(x_1, x_2) = 20x_1^2 + 6x_1x_2 + 5x_2^2 - 62x_1 - 34x_2\$ from \$x_0 = (0, 0)^T\$.
+    return problem_head(4, raw"""
+    Given $F(x) = 20x_1^2 + 6x_1x_2 + 5x_2^2 - 62x_1 - 34x_2$ and starting at $(0, 0)$, find the optimum
+    point so that $\|x_{n+1} - x_n\| \le 10^{-1}$. What is the expected number of one-dimensional
+    searches required to minimize $F(x)$ using the following methods?
+    \begin{itemize}
+      \item[(i)] Steepest descent.
+      \item[(ii)] Conjugate gradients method,
+        $p_{k+1} = -g_{k+1} + \left(\frac{\|g_{k+1}\|}{\|g_k\|}\right)^2 p_k$.
+      \item[(iii)] Newton's method.
+      \item[(iv)] Broyden quasi-Newton method.
+    \end{itemize}""") * """
+    The gradient, the Hessian and the minimizer are
     \\begin{gather*}
       g = \\nabla F = (40x_1 + 6x_2 - 62,\\ 6x_1 + 10x_2 - 34)^T, \\quad H = $(f(H)), \\\\
       x^* = H^{-1} $(f(b)) = $(f(xs)).

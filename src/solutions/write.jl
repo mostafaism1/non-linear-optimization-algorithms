@@ -2,16 +2,17 @@
 const FRAGMENTS = ["p1i" => p1i, "p1ii" => p1ii, "p2" => p2, "p3" => p3, "p4" => p4, "p5" => p5]
 
 const MAIN_TEX = raw"""
-\documentclass[11pt]{article}
+\documentclass[11pt,titlepage]{article}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{amsmath}
+\usepackage{amsthm}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
-\title{Optimization Techniques --- Assignment 2\\ Reference Solutions}
+\title{MTH-645 Optimization Techniques\\ Assignment (2)}
+\author{}
 \date{}
 \begin{document}
 \maketitle
-\section*{Problem 1}
 """ * join(("\\input{$name}" for (name, _) in FRAGMENTS), "\n\\clearpage\n") * raw"""
 
 \end{document}

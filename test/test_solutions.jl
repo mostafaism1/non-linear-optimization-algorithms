@@ -1,7 +1,7 @@
 @testset "fragment p1i" begin
     tex = p1i()
     tr  = conjugate_gradient(P1i, [0.0, 0.0]; steps = 3)
-    @test startswith(tex, raw"\subsection*{Problem 1(i)}")
+    @test startswith(tex, raw"\section*{Problem 1}")                  # Problem 1 heading opens part (i)
     @test occursin(raw"F(x, y) = 2x^2 + xy + 4y^2 - 14x - 19y", tex)
     @test occursin(latex(tr), tex)                                  # full CG working
     @test occursin("converges in at most \$n = 2\$ steps", tex)       # theory remark
@@ -28,14 +28,14 @@ end
     tex = p1ii()
     tr  = conjugate_gradient(P1ii, [0.0, 0.0]; steps = 3)
     nt  = newton(P1ii, tr.x; steps = 20)
-    @test startswith(tex, raw"\subsection*{Problem 1(ii)}")
+    @test startswith(tex, raw"\subsection*{(ii) $F(x_1, x_2) = 2x_1^2 x_2^2 + (x_1 - 2)^2 + (x_2 - 1)^2$}")
     @test occursin(raw"F(x_1, x_2) = 2x_1^2 x_2^2 + (x_1 - 2)^2 + (x_2 - 1)^2", tex)
     @test occursin(latex(tr), tex)                                    # full CG working (3 steps)
     @test !occursin("so the method stops", tex)                       # :max_steps, no stop claim
     @test occursin(raw"x^* = (1.95,\ 0.12)^T, \quad F^* = 0.89", tex)  # actual minimum, 2 d.p.
     @test occursin("positive definite", tex)                          # second-order check
     # comparison at 4 d.p., where 2 d.p. hides the difference; wording makes no data claim
-    @test occursin(raw"\paragraph{Comparison} (to 4 decimal places):", tex)
+    @test occursin("to 4 decimal places", tex)
     @test !occursin("agree", tex)
     @test occursin(raw"F(x_{3}) = 0.8867", tex)
     @test occursin(raw"F^* = 0.8863", tex)
@@ -99,7 +99,7 @@ end
     @test occursin(raw"\alpha_{2} = 1.00", tex)
     @test occursin(raw"x_{3} = (3.00,\ 2.00)^T = x^*", tex)
     # comparison with Problem 2
-    @test occursin(raw"\paragraph{Comparison with Problem 2.}", tex)
+    @test occursin(raw"\paragraph{(iii) Comments.} Comparison with Problem 2:", tex)
 end
 
 @testset "write_solutions includes p3 after p2" begin
@@ -167,4 +167,79 @@ end
     p2tex, p3tex = p2(), p3()
     @test occursin("\\addlegendentry{DFP}", p2tex) && occursin("\\addlegendentry{Rank-one}", p2tex)
     @test occursin("\\addlegendentry{Broyden}", p3tex) && occursin("\\addlegendentry{DFP}", p3tex)
+end
+
+@testset "title page: course code, name and assignment number only" begin
+    mktempdir() do dir
+        write_solutions(dir)
+        main = read(joinpath(dir, "main.tex"), String)
+        @test occursin(raw"\documentclass[11pt,titlepage]{article}", main)     # title on its own page
+        @test occursin(raw"\title{MTH-645 Optimization Techniques\\ Assignment (2)}", main)
+        @test occursin(raw"\author{}", main) && occursin(raw"\date{}", main)
+    end
+end
+
+@testset "each problem repeats the assignment text, then the Solution marker" begin
+    marker = raw"\begin{center}\textbf{Solution:}\end{center}"
+    texts = [p1i() => "Comment on your result after the three steps in comparison with the actual minimum point.",
+             p2()  => "Certify that the following Davidon--Fletcher--Powell (DFP) updating formula",
+             p3()  => "Repeat (2) above using the Broyden quasi-Newton method",
+             p4()  => "What is the expected number of one-dimensional",
+             p5()  => "w.r.t.\\ the positive definite matrix"]
+    for (tex, phrase) in texts
+        @test occursin(phrase, tex)
+        @test count(marker, tex) == 1
+        @test findfirst(phrase, tex).start < findfirst(marker, tex).start
+    end
+    @test !occursin(marker, p1ii())                                  # one statement for Problem 1
+    mktempdir() do dir
+        write_solutions(dir)
+        @test !occursin("Problem 1}", read(joinpath(dir, "main.tex"), String))   # heading moved to p1i
+    end
+end
+
+@testset "part labels (i), (ii), (iii) follow the assignment" begin
+    @test occursin(raw"\subsection*{(i) $F(x, y) = 2x^2 + xy + 4y^2 - 14x - 19y$}", p1i())
+    p2tex, p3tex = p2(), p3()
+    for h in ["(i) Quasi-Newton condition.", "(ii) Two DFP steps on Problem 1(i).",
+              "(iii) Comparison with the rank-one update."]
+        @test occursin("\\paragraph{$h}", p2tex)
+    end
+    for h in ["(i) Quasi-Newton condition.", "(ii) Two Broyden steps on Problem 1(i)."]
+        @test occursin("\\paragraph{$h}", p3tex)
+    end
+    @test !any(occursin("\\paragraph{($c)", p2tex * p3tex) for c in "abc")
+end
+
+@testset "the gradient is written out before the iterations" begin
+    g1i = raw"(4x + y - 14,\ x + 8y - 19)^T"
+    @test occursin(raw"F_x &= 4x + y - 14", p1i()) && occursin(raw"F_y &= x + 8y - 19", p1i())
+    @test occursin(raw"g = \nabla F &= " * g1i, p1i())
+    tex = p1ii()
+    @test occursin(raw"F_{x_1} &= 4x_1 x_2^2 + 2(x_1 - 2)", tex)
+    @test occursin(raw"F_{x_2} &= 4x_1^2 x_2 + 2(x_2 - 1)", tex)
+    @test occursin(raw"g = \nabla F &= (4x_1 x_2^2 + 2(x_1 - 2),\ 4x_1^2 x_2 + 2(x_2 - 1))^T", tex)
+    @test occursin(raw"g = \nabla F = " * g1i, p2()) && occursin(raw"g = \nabla F = " * g1i, p3())
+end
+
+@testset "one closing Comments heading in Problems 1 to 3" begin
+    for tex in (p1i(), p1ii(), p2(), p3())
+        @test count("Comments.}", tex) == 1
+        @test !occursin(raw"\paragraph{Remark.}", tex) && !occursin(raw"\paragraph{Comparison", tex)
+    end
+    tex = p1i()
+    @test findfirst("Actual minimum.", tex).start < findfirst("Comments.", tex).start
+end
+
+@testset "certify: each secant-condition derivation is a proof (amsthm)" begin
+    inside_proof(tex, line) = any(m -> occursin(line, m.match), eachmatch(r"\\begin\{proof\}.*?\\end\{proof\}"s, tex))
+    p2tex, p3tex = p2(), p3()
+    @test count("\\begin{proof}", p2tex) == 2 && count("\\begin{proof}", p3tex) == 1
+    @test inside_proof(p2tex, raw"&= A_k y_k - A_k y_k + s_k = s_k")         # DFP
+    @test inside_proof(p2tex, raw"&= B_k s_k + y_k - B_k s_k = y_k")         # rank-one
+    @test inside_proof(p3tex, raw"&= B_k s_k - B_k s_k + y_k = y_k")         # Broyden
+    mktempdir() do dir
+        write_solutions(dir)
+        @test occursin(raw"\usepackage{amsthm}", read(joinpath(dir, "main.tex"), String))
+    end
 end

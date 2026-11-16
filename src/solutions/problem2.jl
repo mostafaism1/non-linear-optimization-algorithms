@@ -11,21 +11,33 @@ function p2(; digits = 2)
     sr1_check = join(("B_{$(s.k+1)} s_{$(s.k)} = $(f(s.M₊ * s.s)) = y_{$(s.k)}" for s in B.steps), ", \\quad ")
     zs  = join((f(dot(s.y - s.M * s.s, s.s)) for s in B.steps), " and ")
     sy  = join((f(dot(s.s, s.y)) for s in A.steps), " and ")
-    return raw"""
-    \section*{Problem 2}
+    return problem_head(2, raw"""
+    Certify that the following Davidon--Fletcher--Powell (DFP) updating formula satisfies the
+    condition for a quasi-Newton method:
+    \[ A_{k+1} = A_k - \frac{A_k y_k y_k^T A_k}{y_k^T A_k y_k} + \frac{s_k s_k^T}{s_k^T y_k}, \]
+    where $A_k \approx H^{-1}$, $s_k = x_{k+1} - x_k$, $y_k = g_{k+1} - g_k$.
+    Hence, carry out two steps to minimize $F(x)$ of Problem (1)(i) using calculus to find the minimum
+    in each search direction. Compare with the updating formula given by
+    \[ B_{k+1} = B_k + \frac{z z^T}{z^T s_k}, \]
+    where $z = y_k - B_k s_k$, $B_k \approx H$.""") * raw"""
 
-    \paragraph{(a) Quasi-Newton condition.} With $A_k \approx H^{-1}$, a quasi-Newton update must satisfy
+    \paragraph{(i) Quasi-Newton condition.} With $A_k \approx H^{-1}$, a quasi-Newton update must satisfy
     the secant condition $A_{k+1} y_k = s_k$, where $s_k = x_{k+1} - x_k$ and $y_k = g_{k+1} - g_k$
-    (for a quadratic, $y_k = H s_k$, so $H^{-1} y_k = s_k$). Multiply the DFP formula by $y_k$; the terms
+    (for a quadratic, $y_k = H s_k$, so $H^{-1} y_k = s_k$).
+    \begin{proof}
+    Multiply the DFP formula by $y_k$; the terms
     $y_k^T A_k y_k$ and $s_k^T y_k$ are nonzero scalars, so
     \begin{align*}
       A_{k+1} y_k &= A_k y_k - \frac{A_k y_k \,(y_k^T A_k y_k)}{y_k^T A_k y_k} + \frac{s_k \,(s_k^T y_k)}{s_k^T y_k} \\
       &= A_k y_k - A_k y_k + s_k = s_k .
     \end{align*}
-    Thus DFP satisfies the quasi-Newton condition. $A_{k+1}$ is also symmetric when $A_k$ is.
+    Thus DFP satisfies the quasi-Newton condition.
+    \end{proof}
+    $A_{k+1}$ is also symmetric when $A_k$ is.
 
-    \paragraph{(b) Two DFP steps on Problem 1(i).} Minimize $F(x, y) = 2x^2 + xy + 4y^2 - 14x - 19y$
-    from $x_0 = (0, 0)^T$ with $A_0 = I$, using calculus for each line search.
+    \paragraph{(ii) Two DFP steps on Problem 1(i).} Minimize $F(x, y) = 2x^2 + xy + 4y^2 - 14x - 19y$
+    from $x_0 = (0, 0)^T$ with $A_0 = I$, using calculus for each line search. As in Problem 1(i),
+    \[ g = \nabla F = (4x + y - 14,\ x + 8y - 19)^T. \]
 
     """ * latex(A; digits) * """
 
@@ -34,12 +46,15 @@ function p2(; digits = 2)
     After \$n = $n\$ steps,
     \\[ A_{$n} = $(f(A.steps[end].M₊)) = H^{-1}, \\quad H = $(f(P.H(A.x))). \\]
 
-    \\paragraph{(c) Comparison with the rank-one update.} With \$B_k \\approx H\$, the update
-    \$B_{k+1} = B_k + \\frac{z z^T}{z^T s_k}\$, \$z = y_k - B_k s_k\$, satisfies the condition \$B_{k+1} s_k = y_k\$:
+    \\paragraph{(iii) Comparison with the rank-one update.} With \$B_k \\approx H\$, the update
+    \$B_{k+1} = B_k + \\frac{z z^T}{z^T s_k}\$, \$z = y_k - B_k s_k\$, satisfies the condition \$B_{k+1} s_k = y_k\$.
+    \\begin{proof}
+    Multiply the update by \$s_k\$; \$z^T s_k\$ is a nonzero scalar, so
     \\begin{align*}
       B_{k+1} s_k &= B_k s_k + \\frac{z\\,(z^T s_k)}{z^T s_k} = B_k s_k + z \\\\
-      &= B_k s_k + y_k - B_k s_k = y_k .
+      &= B_k s_k + y_k - B_k s_k = y_k . \\qedhere
     \\end{align*}
+    \\end{proof}
     Two steps from \$x_0 = (0, 0)^T\$ with \$B_0 = I\$ and \$p_k = -B_k^{-1} g_k\$:
 
     """ * latex(B; digits) * """
@@ -48,7 +63,7 @@ function p2(; digits = 2)
     \\[ $sr1_check. \\]
     After \$n = $n\$ steps, \$B_{$n} = $(f(B.steps[end].M₊)) = H\$.
 
-    \\paragraph{Comparison.}
+    \\paragraph{Comments.}
     \\begin{itemize}
       \\item Both methods start with the identity (\$A_0 = B_0 = I\$), so the first step is the
             steepest-descent step \$p_0 = -g_0\$ for both.

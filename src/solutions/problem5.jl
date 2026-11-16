@@ -9,12 +9,11 @@ function p5(; digits = 2)
     frac(q; f = "\\frac") = (q < 0 ? "-" : "") * "$f{$(abs(numerator(q)))}{$(denominator(q))}"
     signed(t) = t < 0 ? "- $(-t)" : "+ $t"
     check = "$(2Av[1]) $(signed(3Av[2])) $(signed(Int(k * Av[3])))"
-    return """
-    \\section*{Problem 5}
-
-    Find \$k\$ so that \$u = (2,\\ 3,\\ k)^T\$ and \$v = (1,\\ -1,\\ 3)^T\$ are conjugate with respect to
-    \\[ A = $(fmt(A; digits = 0)). \\]
-    Two vectors are \$A\$-conjugate when \$u^T A v = 0\$. First,
+    return problem_head(5, """
+    Find the value of \$k\$, so that the two vectors \$[2,\\ 3,\\ k]\$ and \$[1,\\ -1,\\ 3]\$ are conjugate
+    w.r.t.\\ the positive definite matrix
+    \\[ A = $(fmt(A; digits = 0)). \\]""") * """
+    Let \$u = (2,\\ 3,\\ k)^T\$ and \$v = (1,\\ -1,\\ 3)^T\$. Two vectors are \$A\$-conjugate when \$u^T A v = 0\$. First,
     \\[ A v = $(ints(Av)), \\]
     so
     \\[ u^T A v = $(2Av[1]) + $(3Av[2]) + $(Av[3])k = $c + $(Av[3])k = 0

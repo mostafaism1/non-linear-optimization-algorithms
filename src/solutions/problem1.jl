@@ -5,20 +5,31 @@ function p1i(; digits = 2)
     tr = conjugate_gradient(P, [0.0, 0.0]; steps = 3)
     nt = newton(P, [0.0, 0.0]; steps = 10)            # actual minimum, independent of CG
     f(v) = fmt(v; digits)
-    return raw"""
-    \subsection*{Problem 1(i)}
-    Minimize $F(x, y) = 2x^2 + xy + 4y^2 - 14x - 19y$ from $x_0 = (0, 0)^T$ with three
-    conjugate gradient (Fletcher--Reeves) steps, using calculus for each line search.
+    return problem_head(1, raw"""
+    Carry out three steps of the conjugate gradient method to find the minimum point of the functions
+    \begin{gather*}
+      \text{(i)}\quad F(x, y) = 2x^2 + xy + 4y^2 - 14x - 19y, \\
+      \text{(ii)}\quad F(x) = 2x_1^2 x_2^2 + (x_1 - 2)^2 + (x_2 - 1)^2.
+    \end{gather*}
+    Start at $(0, 0)$ and use calculus to find the minimum in each conjugate direction.
+    Comment on your result after the three steps in comparison with the actual minimum point.""") * raw"""
+    \subsection*{(i) $F(x, y) = 2x^2 + xy + 4y^2 - 14x - 19y$}
+    \begin{align*}
+      F_x &= 4x + y - 14 \\
+      F_y &= x + 8y - 19 \\
+      g = \nabla F &= (4x + y - 14,\ x + 8y - 19)^T
+    \end{align*}
+    Three Fletcher--Reeves steps from $x_0 = (0, 0)^T$.
 
     """ * latex(tr; digits) * raw"""
 
-    \paragraph{Remark.} $F$ is quadratic with positive definite Hessian
-    $H = \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}$, so CG with exact line searches
-    converges in at most $n = 2$ steps; no third step is needed.
-
     \paragraph{Actual minimum.} Solving $\nabla F = 0$ gives
-    """ * "\\[ x^* = $(f(nt.x)), \\quad F^* = $(f(nt.Fx)), \\]\n" *
-    "which CG reached exactly in two steps.\n" * """
+    """ * "\\[ x^* = $(f(nt.x)), \\quad F^* = $(f(nt.Fx)). \\]\n" * raw"""
+
+    \paragraph{Comments.} $F$ is quadratic with positive definite Hessian
+    $H = \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}$, so CG with exact line searches
+    converges in at most $n = 2$ steps. CG reached $x^*$ exactly in two steps; no third step is needed.
+    """ * """
 
     \\paragraph{Path.} The grey contours pass through \$x_0\$ and \$x_1\$. The first search stops where
     its line touches the contour through \$x_1\$. The second direction is \$H\$-conjugate to the first
@@ -41,18 +52,22 @@ function p1ii(; digits = 2, cmp_digits = 4)
     g(v) = fmt(v; digits = cmp_digits)
     n  = length(tr.steps)
     return raw"""
-    \subsection*{Problem 1(ii)}
-    Minimize $F(x_1, x_2) = 2x_1^2 x_2^2 + (x_1 - 2)^2 + (x_2 - 1)^2$ from $x_0 = (0, 0)^T$ with
-    three conjugate gradient (Fletcher--Reeves) steps, using calculus for each line search.
+    \subsection*{(ii) $F(x_1, x_2) = 2x_1^2 x_2^2 + (x_1 - 2)^2 + (x_2 - 1)^2$}
+    \begin{align*}
+      F_{x_1} &= 4x_1 x_2^2 + 2(x_1 - 2) \\
+      F_{x_2} &= 4x_1^2 x_2 + 2(x_2 - 1) \\
+      g = \nabla F &= (4x_1 x_2^2 + 2(x_1 - 2),\ 4x_1^2 x_2 + 2(x_2 - 1))^T
+    \end{align*}
+    Three Fletcher--Reeves steps from $x_0 = (0, 0)^T$.
 
     """ * latex(tr; digits) * """
 
-    \\paragraph{Actual minimum.} \$F\$ is not quadratic, so CG has no finite-termination guarantee.
-    Newton's method on \$\\nabla F = 0\$, started at \$x_{$n}\$, converges in $(length(nt.steps)) iterations to
+    \\paragraph{Actual minimum.} Newton's method on \$\\nabla F = 0\$, started at \$x_{$n}\$, converges in $(length(nt.steps)) iterations to
     \\[ x^* = $(f(nt.x)), \\quad F^* = $(f(nt.Fx)), \\]
     where \$H(x^*)\$ is positive definite (eigenvalues $(f(λ[1])) and $(f(λ[2]))), so \$x^*\$ is a strict local minimum.
 
-    \\paragraph{Comparison} (to $cmp_digits decimal places):
+    \\paragraph{Comments.} \$F\$ is not quadratic, so CG has no finite-termination guarantee.
+    After three steps (to $cmp_digits decimal places):
     \\[ F(x_{$n}) = $(g(tr.Fx)), \\quad F^* = $(g(nt.Fx)), \\quad \\|x_{$n} - x^*\\| = $(g(norm(tr.x - nt.x))). \\]
     """
 end

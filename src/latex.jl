@@ -37,6 +37,10 @@ function fmt_poly(c::AbstractVector; digits = 2)
     return out
 end
 
+"""Problem `n` heading, the assignment text, then the centred Solution marker."""
+problem_head(n, text) = "\\section*{Problem $n}\n\n" * text *
+                        "\n\n\\begin{center}\\textbf{Solution:}\\end{center}\n\n"
+
 """Lines for xₖ, F(xₖ) and gₖ, common to every line-search method."""
 point_lines(s, f) = ["x_{$(s.k)} &= $(f(s.x)), \\quad F(x_{$(s.k)}) = $(f(s.Fx))",
                      "g_{$(s.k)} &= \\nabla F(x_{$(s.k)}) = $(f(s.g))"]
