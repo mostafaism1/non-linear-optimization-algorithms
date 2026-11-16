@@ -276,10 +276,12 @@ end
     @test !occursin("CG", p2()) && !occursin("CG", p3())
 end
 
-@testset "the Path text and its figure are on the same page" begin
+@testset "each figure has a caption below it, on the same page" begin
     for tex in (p1i(), p1ii(), p2(), p3(), p4())
         m = match(r"\\begin\{minipage\}\{\\linewidth\}(.*?)\\end\{minipage\}"s, tex)
         @test m !== nothing
-        @test occursin(r"\\paragraph\{Paths?\.\}", m[1]) && occursin(raw"\begin{tikzpicture}", m[1])
+        @test occursin(r"\\end\{tikzpicture\}.*\\captionof\{figure\}\{Paths? of "s, m[1])
+        @test !occursin(raw"\paragraph{Path", tex)
     end
+    @test occursin(raw"\usepackage{caption}", OptSolutions.MAIN_TEX)
 end

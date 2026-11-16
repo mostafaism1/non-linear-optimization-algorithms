@@ -7,6 +7,7 @@ const MAIN_TEX = raw"""
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{pgfplots}
+\usepackage{caption}
 \pgfplotsset{compat=1.18}
 \title{MTH-645 Optimization Techniques\\ Assignment (2)}
 \author{}

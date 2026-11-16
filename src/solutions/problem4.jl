@@ -85,16 +85,11 @@ function p4(; digits = 2)
       (iv) Broyden & $n_br \\\\
     \\end{tabular}
 
-    """ * keep_together("""
-    \\paragraph{Paths.} The grey contours pass through the steepest-descent points
+    """ * captioned(latex_plot(P.F, [sd, cg, nt, br]; xlim = (-1.0, 3.3), ylim = (-0.3, 3.2),
+                 levels = [s.Fx for s in sd.steps]), """
+    Paths of the four methods on the contours of \$F\$. The grey contours pass through the steepest-descent points
     \$x_0, \\dots, x_{$(n_sd - 1)}\$. Each steepest-descent search stops where its line touches a
     contour, so the next direction \$-g\$ is at a right angle to the last one. CG and Broyden start
     with the same step; CG then goes to \$x^*\$, and Broyden takes a second steepest-descent step first.
-    Newton goes to \$x^*\$ in one step.
-
-    \\begin{center}
-    $(latex_plot(P.F, [sd, cg, nt, br]; xlim = (-1.0, 3.3), ylim = (-0.3, 3.2),
-                 levels = [s.Fx for s in sd.steps]))
-    \\end{center}
-    """)
+    Newton goes to \$x^*\$ in one step.""")
 end

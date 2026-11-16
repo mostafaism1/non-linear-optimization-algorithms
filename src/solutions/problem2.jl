@@ -78,13 +78,8 @@ function p2(; digits = 2)
             \$B_k p_k = -g_k\$.
     \\end{itemize}
 
-    """ * keep_together("""
-    \\paragraph{Paths.} On a quadratic with exact line searches and \$A_0 = B_0 = I\$, DFP and the
+    """ * captioned(latex_plot(P.F, [A, B]; xlim = (-0.3, 4.0), ylim = (-0.3, 3.0), levels = [s.Fx for s in A.steps]), """
+    Paths of DFP and the rank-one update on the contours of \$F\$. On a quadratic with exact line searches and \$A_0 = B_0 = I\$, DFP and the
     rank-one update give the same points as the conjugate gradient method in Problem 1(i), so the two paths lie on one line.
-    The grey contours pass through \$x_0\$ and \$x_1\$.
-
-    \\begin{center}
-    $(latex_plot(P.F, [A, B]; xlim = (-0.3, 4.0), ylim = (-0.3, 3.0), levels = [s.Fx for s in A.steps]))
-    \\end{center}
-    """)
+    The grey contours pass through \$x_0\$ and \$x_1\$.""")
 end
