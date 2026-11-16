@@ -51,12 +51,12 @@ function p4(; digits = 2)
     $(latex_table(cg; digits))
     \$p_0 = -g_0\$, so the first search is the steepest-descent search. The directions are
     \$H\$-conjugate, so on a quadratic in \$n = 2\$ variables CG reaches \$x^*\$ after at most
-    \$n\$ searches: \$g_{$n_cg} = 0\$, \\textbf{$n_cg searches}.
+    \$n\$ searches: \$g_{$n_cg} = \\nabla F(x_{$n_cg}) = $(f(cg.g))\$, \\textbf{$n_cg searches}.
 
     \\paragraph{(iii) Newton's method.} \$p_k = -H^{-1} g_k\$.
     $newton_block
     \$F\$ is quadratic, so the Newton direction points to \$x^*\$ and the search gives \$\\alpha_0 = 1\$.
-    Then \$g_{1} = 0\$: \\textbf{$n_nt search}.
+    Then \$g_{1} = \\nabla F(x_{1}) = $(f(nt.g))\$: \\textbf{$n_nt search}.
 
     \\paragraph{(iv) Broyden.} \$B_0 = I\$, \$p_k = -B_k^{-1} g_k\$.
 

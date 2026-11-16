@@ -31,7 +31,7 @@ function conjugate_gradient(F, ∇F, x0; steps, linesearch, gtol = 1e-10, xtol =
     records = CGStep{typeof(β)}[]
     for k in 0:steps-1
         g = ∇F(x)
-        norm(g) ≤ gtol && return Trace(records, x, F(x), :converged)
+        norm(g) ≤ gtol && return Trace(records, x, F(x), g, :converged)
         if k == 0
             βk, p = 0.0, -g
         else
@@ -43,9 +43,10 @@ function conjugate_gradient(F, ∇F, x0; steps, linesearch, gtol = 1e-10, xtol =
         α = ls.α
         push!(records, CGStep{typeof(β)}(k, x, F(x), g, βk, p, α, ls))
         x = x + α * p
-        norm(α * p) ≤ xtol && return Trace(records, x, F(x), :small_step)
+        norm(α * p) ≤ xtol && return Trace(records, x, F(x), ∇F(x), :small_step)
     end
-    return Trace(records, x, F(x), norm(∇F(x)) ≤ gtol ? :converged : :max_steps)
+    g = ∇F(x)
+    return Trace(records, x, F(x), g, norm(g) ≤ gtol ? :converged : :max_steps)
 end
 
 """

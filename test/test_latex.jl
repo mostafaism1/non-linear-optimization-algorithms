@@ -60,7 +60,7 @@ end
     tr = conjugate_gradient(P1i, [0.0, 0.0]; steps = 3)
     out = latex(tr)
     @test out == join(latex.(tr.steps), "\n") * "\n" *
-                 raw"$g_{2} = 0$, so the method stops at $x_{2} = x^*$." * "\n\n" *
+                 raw"$g_{2} = \nabla F(x_{2}) = (0.00,\ 0.00)^T$, so the method stops at $x_{2} = x^*$." * "\n\n" *
                  raw"\medskip" * "\n" * latex_table(tr)          # space before the table
 
     short = conjugate_gradient(P1i, [0.0, 0.0]; steps = 1)   # :max_steps ⇒ no stop sentence
@@ -123,7 +123,7 @@ end
 @testset "whole quasi-Newton trace: blocks, stop sentence, table" begin
     tr = dfp(P1i, [0.0, 0.0]; steps = 2)
     @test latex(tr) == join(latex.(tr.steps), "\n") * "\n" *
-                       raw"$g_{2} = 0$, so the method stops at $x_{2} = x^*$." * "\n\n" *
+                       raw"$g_{2} = \nabla F(x_{2}) = (0.00,\ 0.00)^T$, so the method stops at $x_{2} = x^*$." * "\n\n" *
                        raw"\medskip" * "\n" * latex_table(tr)
 end
 

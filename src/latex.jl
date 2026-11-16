@@ -96,7 +96,7 @@ All iteration blocks, then (if the run converged) the stop sentence, then the su
 function latex(tr::Trace; digits = 2)
     n = length(tr.steps)
     stop = tr.status == :converged ?
-        "\$g_{$n} = 0\$, so the method stops at \$x_{$n} = x^*\$.\n\n" : "\n"
+        "\$g_{$n} = \\nabla F(x_{$n}) = $(fmt(tr.g; digits))\$, so the method stops at \$x_{$n} = x^*\$.\n\n" : "\n"
     return join((latex(s; digits) for s in tr.steps), "\n") * "\n" * stop *
            "\\medskip\n" * latex_table(tr; digits)
 end

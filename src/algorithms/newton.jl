@@ -18,11 +18,12 @@ function newton(P::Problem, x0; steps, gtol = 1e-10)
     records = NewtonStep[]
     for k in 0:steps-1
         g = P.∇F(x)
-        norm(g) ≤ gtol && return Trace(records, x, P.F(x), :converged)
+        norm(g) ≤ gtol && return Trace(records, x, P.F(x), g, :converged)
         H = P.H(x)
         d = -(H \ g)
         push!(records, NewtonStep(k, x, P.F(x), g, H, d))
         x = x + d
     end
-    return Trace(records, x, P.F(x), norm(P.∇F(x)) ≤ gtol ? :converged : :max_steps)
+    g = P.∇F(x)
+    return Trace(records, x, P.F(x), g, norm(g) ≤ gtol ? :converged : :max_steps)
 end

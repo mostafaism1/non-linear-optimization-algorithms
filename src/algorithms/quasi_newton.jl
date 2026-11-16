@@ -39,7 +39,7 @@ function quasi_newton(P::Problem, x0; steps, update,
     records = QNStep{typeof(update)}[]
     for k in 0:steps-1
         g = P.∇F(x)
-        norm(g) ≤ gtol && return Trace(records, x, P.F(x), :converged)
+        norm(g) ≤ gtol && return Trace(records, x, P.F(x), g, :converged)
         p = direction(update, M, g)
         ls = linesearch(x, p)
         s = ls.α * p
@@ -47,9 +47,10 @@ function quasi_newton(P::Problem, x0; steps, update,
         M₊ = update(M, s, y)
         push!(records, QNStep{typeof(update)}(k, x, P.F(x), g, M, p, ls.α, ls, s, y, M₊))
         x, M = x + s, M₊
-        norm(s) ≤ xtol && return Trace(records, x, P.F(x), :small_step)
+        norm(s) ≤ xtol && return Trace(records, x, P.F(x), P.∇F(x), :small_step)
     end
-    return Trace(records, x, P.F(x), norm(P.∇F(x)) ≤ gtol ? :converged : :max_steps)
+    g = P.∇F(x)
+    return Trace(records, x, P.F(x), g, norm(g) ≤ gtol ? :converged : :max_steps)
 end
 
 """DFP: Aₖ₊₁ = Aₖ − AₖyₖyₖᵀAₖ / (yₖᵀAₖyₖ) + sₖsₖᵀ / (sₖᵀyₖ)."""

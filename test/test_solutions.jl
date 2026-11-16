@@ -244,3 +244,10 @@ end
         @test occursin(raw"\usepackage{amsthm}", read(joinpath(dir, "main.tex"), String))
     end
 end
+
+@testset "p4: the zero gradient that stops CG and Newton is computed, not only stated" begin
+    tex = p4()
+    @test occursin(raw"$g_{2} = \nabla F(x_{2}) = (0.00,\ 0.00)^T$", tex)   # CG
+    @test occursin(raw"$g_{1} = \nabla F(x_{1}) = (0.00,\ 0.00)^T$", tex)   # Newton
+    @test !occursin(raw"$g_{2} = 0$", tex) && !occursin(raw"$g_{1} = 0$", tex)
+end

@@ -52,3 +52,13 @@ end
     @test [s.α for s in tr.steps] ≈ [s.α for s in ref.steps]
     @test tr.status == :converged
 end
+
+@testset "Trace keeps the gradient at the last point, for every method" begin
+    for tr in (conjugate_gradient(P1i, [0.0, 0.0]; steps = 1),      # :max_steps
+               conjugate_gradient(P1i, [0.0, 0.0]; steps = 3),      # :converged
+               steepest_descent(P4, [0.0, 0.0]; steps = 50, xtol = 0.1),   # :small_step
+               dfp(P1i, [0.0, 0.0]; steps = 1), broyden(P1i, [0.0, 0.0]; steps = 3),
+               newton(P1i, [0.0, 0.0]; steps = 1), newton(P1i, [0.0, 0.0]; steps = 3))
+        @test tr.g == P1i.∇F(tr.x) || tr.g == P4.∇F(tr.x)
+    end
+end
