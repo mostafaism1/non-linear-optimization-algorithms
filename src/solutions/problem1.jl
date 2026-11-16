@@ -33,6 +33,7 @@ function p1i(; digits = 2)
     $p_2 = 0$, so the third step does not move.
     """ * """
 
+    """ * keep_together("""
     \\paragraph{Path.} The grey contours pass through \$x_0\$ and \$x_1\$. The first search stops where
     its line touches the contour through \$x_1\$. The second direction is \$H\$-conjugate to the first
     and goes to \$x^*\$.
@@ -40,7 +41,7 @@ function p1i(; digits = 2)
     \\begin{center}
     $(latex_plot(P.F, [tr]; xlim = (-0.3, 4.0), ylim = (-0.3, 3.0), levels = [s.Fx for s in tr.steps]))
     \\end{center}
-    """
+    """)
 end
 
 """Problem 1(ii): three CG steps on F = 2x₁²x₂² + (x₁−2)² + (x₂−1)² from (0, 0), compared with the actual minimum."""
@@ -73,6 +74,7 @@ function p1ii(; digits = 2, cmp_digits = 4)
     After three steps (to $cmp_digits decimal places):
     \\[ F(x_{$n}) = $(g(tr.Fx)), \\quad F^* = $(g(nt.Fx)), \\quad \\|x_{$n} - x^*\\| = $(g(norm(tr.x - nt.x))). \\]
 
+    """ * keep_together("""
     \\paragraph{Path.} The grey contours pass through \$x_0\$, \$x_1\$ and \$x_2\$. \$F\$ is not quadratic,
     so the contours are not ellipses. Each search stops where its line touches the contour through
     the next point. The last point is \$x_{$n}\$; \$x^*\$ is only $(g(norm(tr.x - nt.x))) from it, so
@@ -81,5 +83,5 @@ function p1ii(; digits = 2, cmp_digits = 4)
     \\begin{center}
     $(latex_plot(P.F, [tr]; xlim = (-0.3, 2.3), ylim = (-0.3, 1.0), levels = [s.Fx for s in tr.steps]))
     \\end{center}
-    """
+    """)
 end

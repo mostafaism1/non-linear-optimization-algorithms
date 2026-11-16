@@ -104,6 +104,9 @@ end_direction_lines(tr::Trace{QNStep{U}}, n, f) where {U} =
 """Sentence after a zero direction pₙ: the step does not move, so xₙ₊₁ = xₙ = x*."""
 no_move(n) = "\$p_{$n} = 0\$, so the step does not move: \$x_{$(n+1)} = x_{$n} = x^*\$.\n"
 
+"""Wrap `body` in a full-width minipage, so that LaTeX does not put a page break inside it."""
+keep_together(body) = "\\noindent\\begin{minipage}{\\linewidth}\n" * body * "\\end{minipage}\n"
+
 """Iteration block at the end point of `tr` (gₙ = 0): xₙ, F, gₙ and the zero direction pₙ, then `no_move`."""
 function end_block(tr::Trace, f)
     n = length(tr.steps)

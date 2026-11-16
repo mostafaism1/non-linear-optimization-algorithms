@@ -55,6 +55,7 @@ function p3(; digits = 2)
       \\item Broyden needs only \$s_k^T s_k \\neq 0\$, which holds for every nonzero step.
     \\end{itemize}
 
+    """ * keep_together("""
     \\paragraph{Paths.} DFP (Problem 2) and Broyden take the same first step. DFP then goes to \$x^*\$.
     Broyden takes a second steepest-descent step to \$x_2\$, then the Newton step to \$x^*\$.
     The grey contours pass through the Broyden points \$x_0\$, \$x_1\$, \$x_2\$.
@@ -63,5 +64,5 @@ function p3(; digits = 2)
     $(latex_plot(P.F, [dfp(P, [0.0, 0.0]; steps = 2), C]; xlim = (-0.3, 4.0), ylim = (-0.3, 3.0),
                  levels = [s.Fx for s in C.steps]))
     \\end{center}
-    """
+    """)
 end
