@@ -6,7 +6,6 @@ function p3(; digits = 2)
     C  = broyden(P, [0.0, 0.0]; steps = 3)
     f(v) = fmt(v; digits)
     n, t = length(B.steps), C.steps[end]
-    check = join(("B_{$(s.k+1)} s_{$(s.k)} = $(f(s.M₊ * s.s)) = y_{$(s.k)}" for s in B.steps), ", \\quad ")
     return problem_head(3, raw"""
     Repeat (2) above using the Broyden quasi-Newton method starting from the same point, with the
     identity matrix as an initial guess for the Hessian matrix. The updating formula for the Hessian
@@ -33,8 +32,6 @@ function p3(; digits = 2)
 
     """ * latex(B; digits) * """
 
-    \\paragraph{Check.} On the computed numbers:
-    \\[ $check. \\]
     After \$n = $n\$ steps, \$B_{$n} = $(f(B.steps[end].M₊)) = H\$, but
     \$x_{$n} = $(f(B.x)) \\neq x^*\$, because \$g_{$n} = $(f(P.∇F(B.x))) \\neq 0\$.
 

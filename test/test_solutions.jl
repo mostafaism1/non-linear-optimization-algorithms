@@ -62,13 +62,13 @@ end
     @test occursin(raw"&= A_k y_k - A_k y_k + s_k = s_k", tex)
     # (b) two DFP steps on 1(i), with the condition checked on the computed numbers
     @test occursin(latex(A), tex)
-    @test occursin(raw"A_{1} y_{0} = (1.85,\ 2.52)^T = s_{0}", tex)
-    @test occursin(raw"A_{2} y_{1} = (1.15,\ -0.52)^T = s_{1}", tex)
+    @test !occursin("Check.", tex) && !occursin(raw"A_{1} y_{0} =", tex)   # certified once, by the proof
+    @test occursin(raw"\[ A_{2} = \begin{pmatrix} 0.26 & -0.03 \\ -0.03 & 0.13 \end{pmatrix} = H^{-1}. \]", tex)
     @test occursin(raw"A_{2} = \begin{pmatrix} 0.26 & -0.03 \\ -0.03 & 0.13 \end{pmatrix} = H^{-1}", tex)
     # (c) rank-one comparison
     @test occursin(raw"&= B_k s_k + y_k - B_k s_k = y_k", tex)
     @test occursin(latex(B), tex)
-    @test occursin(raw"B_{2} s_{1} = (4.06,\ -2.99)^T = y_{1}", tex)
+    @test !occursin(raw"B_{2} s_{1} =", tex)
     @test occursin(raw"B_{2} = \begin{pmatrix} 4.00 & 1.00 \\ 1.00 & 8.00 \end{pmatrix} = H", tex)
 end
 
@@ -90,7 +90,7 @@ end
     @test occursin(raw"&= B_k s_k - B_k s_k + y_k = y_k", tex)
     # (b) two steps, checked on the computed numbers
     @test occursin(latex(B), tex)
-    @test occursin(raw"B_{1} s_{0} = (9.94,\ 21.99)^T = y_{0}", tex)
+    @test !occursin("Check.", tex) && !occursin(raw"B_{1} s_{0} =", tex)
     @test occursin(raw"B_{2} = \begin{pmatrix} 4.00 & 1.00 \\ 1.00 & 8.00 \end{pmatrix} = H", tex)
     @test occursin(raw"x_{2} = (2.77,\ 1.84)^T \neq x^*", tex)
     @test occursin(raw"\paragraph{Third step.} In iteration $k=1$, $p_{1} = -g_{1}$", tex)   # plain remark

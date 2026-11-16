@@ -7,8 +7,6 @@ function p2(; digits = 2)
     f(v) = fmt(v; digits)
     n  = length(A.steps)
     # quasi-Newton condition on the computed numbers, one equation per step
-    dfp_check = join(("A_{$(s.k+1)} y_{$(s.k)} = $(f(s.M₊ * s.y)) = s_{$(s.k)}" for s in A.steps), ", \\quad ")
-    sr1_check = join(("B_{$(s.k+1)} s_{$(s.k)} = $(f(s.M₊ * s.s)) = y_{$(s.k)}" for s in B.steps), ", \\quad ")
     return problem_head(2, raw"""
     Certify that the following Davidon--Fletcher--Powell (DFP) updating formula satisfies the
     condition for a quasi-Newton method:
@@ -40,10 +38,8 @@ function p2(; digits = 2)
 
     """ * latex(A; digits) * """
 
-    \\paragraph{Check.} On the computed numbers:
-    \\[ $dfp_check. \\]
     After \$n = $n\$ steps,
-    \\[ A_{$n} = $(f(A.steps[end].M₊)) = H^{-1}, \\quad H = $(f(P.H(A.x))). \\]
+    \\[ A_{$n} = $(f(A.steps[end].M₊)) = H^{-1}. \\]
 
     \\paragraph{(iii) Comparison with the rank-one update.} With \$B_k \\approx H\$, the update
     \$B_{k+1} = B_k + \\frac{z z^T}{z^T s_k}\$, \$z = y_k - B_k s_k\$, satisfies the condition \$B_{k+1} s_k = y_k\$.
@@ -58,8 +54,6 @@ function p2(; digits = 2)
 
     """ * latex(B; digits) * """
 
-    \\paragraph{Check.} On the computed numbers:
-    \\[ $sr1_check. \\]
     After \$n = $n\$ steps, \$B_{$n} = $(f(B.steps[end].M₊)) = H\$.
 
     \\paragraph{Comments.} Both methods reach \$x^* = $(f(A.x))\$ in \$n = $n\$ steps. DFP builds
