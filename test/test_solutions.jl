@@ -223,6 +223,18 @@ end
     @test occursin(raw"g = \nabla F = " * g1i, p2()) && occursin(raw"g = \nabla F = " * g1i, p3())
 end
 
+@testset "the Hessian is derived wherever it is used" begin
+    H1i = raw"H = \nabla^2 F"
+    @test occursin(H1i * raw" &= \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}", p1i())
+    for tex in (p2(), p3())                       # "As in Problem 1(i)", before the first step
+        @test occursin(H1i * raw" = \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}", tex)
+        @test findfirst(H1i, tex).start < findfirst(raw"Iteration $k=0$", tex).start
+    end
+    tex = p1ii()
+    @test occursin(H1i * raw" &= \begin{pmatrix} 4x_2^2 + 2 & 8x_1 x_2 \\ 8x_1 x_2 & 4x_1^2 + 2 \end{pmatrix}", tex)
+    @test occursin(raw"H(x^*) = \begin{pmatrix}", tex)
+end
+
 @testset "one closing Comments heading in Problems 1 to 3" begin
     for tex in (p1i(), p1ii(), p2(), p3())
         @test count("Comments.}", tex) == 1

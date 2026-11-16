@@ -17,7 +17,8 @@ function p1i(; digits = 2)
     \begin{align*}
       F_x &= 4x + y - 14 \\
       F_y &= x + 8y - 19 \\
-      g = \nabla F &= (4x + y - 14,\ x + 8y - 19)^T
+      g = \nabla F &= (4x + y - 14,\ x + 8y - 19)^T \\
+      H = \nabla^2 F &= \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}
     \end{align*}
     Three Fletcher--Reeves steps from $x_0 = (0, 0)^T$.
 
@@ -26,8 +27,8 @@ function p1i(; digits = 2)
     \paragraph{Actual minimum.} Solving $\nabla F = 0$ gives
     """ * "\\[ x^* = $(f(nt.x)), \\quad F^* = $(f(nt.Fx)). \\]\n" * raw"""
 
-    \paragraph{Comments.} $F$ is quadratic with positive definite Hessian
-    $H = \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}$, so the conjugate gradient (CG) method with exact line searches
+    \paragraph{Comments.} $F$ is quadratic with positive definite Hessian $H$, so the conjugate
+    gradient (CG) method with exact line searches
     converges in at most $n = 2$ steps. CG reached $x^*$ exactly in two steps; the third direction is
     $p_2 = 0$, so the third step does not move.
     """ * """
@@ -57,14 +58,15 @@ function p1ii(; digits = 2, cmp_digits = 4)
     \begin{align*}
       F_{x_1} &= 4x_1 x_2^2 + 2(x_1 - 2) \\
       F_{x_2} &= 4x_1^2 x_2 + 2(x_2 - 1) \\
-      g = \nabla F &= (4x_1 x_2^2 + 2(x_1 - 2),\ 4x_1^2 x_2 + 2(x_2 - 1))^T
+      g = \nabla F &= (4x_1 x_2^2 + 2(x_1 - 2),\ 4x_1^2 x_2 + 2(x_2 - 1))^T \\
+      H = \nabla^2 F &= \begin{pmatrix} 4x_2^2 + 2 & 8x_1 x_2 \\ 8x_1 x_2 & 4x_1^2 + 2 \end{pmatrix}
     \end{align*}
     Three Fletcher--Reeves steps from $x_0 = (0, 0)^T$.
 
     """ * latex(tr; digits) * """
 
     \\paragraph{Actual minimum.} Newton's method on \$\\nabla F = 0\$, started at \$x_{$n}\$, converges in $(length(nt.steps)) iterations to
-    \\[ x^* = $(f(nt.x)), \\quad F^* = $(f(nt.Fx)), \\]
+    \\[ x^* = $(f(nt.x)), \\quad F^* = $(f(nt.Fx)), \\quad H(x^*) = $(f(P.H(nt.x))), \\]
     where \$H(x^*)\$ is positive definite (eigenvalues $(f(λ[1])) and $(f(λ[2]))), so \$x^*\$ is a strict local minimum.
 
     \\paragraph{Comments.} \$F\$ is not quadratic, so CG has no finite-termination guarantee.

@@ -37,7 +37,8 @@ function p2(; digits = 2)
 
     \paragraph{(ii) Two DFP steps on Problem 1(i).} Minimize $F(x, y) = 2x^2 + xy + 4y^2 - 14x - 19y$
     from $x_0 = (0, 0)^T$ with $A_0 = I$, using calculus for each line search. As in Problem 1(i),
-    \[ g = \nabla F = (4x + y - 14,\ x + 8y - 19)^T. \]
+    \[ g = \nabla F = (4x + y - 14,\ x + 8y - 19)^T, \quad
+       H = \nabla^2 F = \begin{pmatrix} 4 & 1 \\ 1 & 8 \end{pmatrix}. \]
 
     """ * latex(A; digits) * """
 
